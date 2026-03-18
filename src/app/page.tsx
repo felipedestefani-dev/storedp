@@ -8,149 +8,157 @@ export default function Page() {
     return `https://wa.me/${phone}?text=${text}`
   }
 
-  const models = [
+  const products = [
     {
       id: 'barbearia',
-      title: 'Barbearia / Salão',
-      tag: 'Serviço',
-      desc: 'Agendamento + galeria + WhatsApp',
-      highlights: ['Home + Serviços', 'Galeria', 'Botão WhatsApp'],
+      title: 'Modelo Barbearia',
+      category: 'Serviços',
+      desc: 'Agendamento, galeria e CTA no WhatsApp',
+      priceFrom: 299,
+      features: ['Página inicial', 'Serviços', 'WhatsApp fixo'],
     },
     {
       id: 'clinica',
-      title: 'Clínica / Estética',
-      tag: 'Profissional',
-      desc: 'Autoridade e conversão',
-      highlights: ['Sobre', 'Procedimentos', 'Depoimentos'],
+      title: 'Modelo Clínica/Estética',
+      category: 'Profissionais',
+      desc: 'Autoridade, depoimentos e conversão',
+      priceFrom: 399,
+      features: ['Sobre', 'Procedimentos', 'Depoimentos'],
     },
     {
       id: 'mecanica',
-      title: 'Mecânica / Auto',
-      tag: 'Local',
-      desc: 'Orçamento rápido no WhatsApp',
-      highlights: ['Serviços', 'Mapa', 'CTA fixo'],
+      title: 'Modelo Mecânica/Auto',
+      category: 'Serviços',
+      desc: 'Orçamento rápido com botão direto',
+      priceFrom: 349,
+      features: ['Serviços', 'Mapa', 'CTA fixo'],
     },
     {
       id: 'restaurante',
-      title: 'Restaurante / Pizzaria',
-      tag: 'Cardápio',
-      desc: 'Menu com botão “Pedir agora”',
-      highlights: ['Cardápio', 'Horários', 'Pedido via WhatsApp'],
+      title: 'Modelo Restaurante',
+      category: 'Cardápio',
+      desc: 'Cardápio e botão “Pedir agora”',
+      priceFrom: 449,
+      features: ['Cardápio', 'Horários', 'Pedido no WhatsApp'],
     },
     {
       id: 'imobiliaria',
-      title: 'Imobiliária',
-      tag: 'Vitrine',
-      desc: 'Destaques + contato rápido',
-      highlights: ['Cards de imóveis', 'Filtros', 'WhatsApp'],
+      title: 'Modelo Imobiliária',
+      category: 'Vitrine',
+      desc: 'Destaques, filtros e contato rápido',
+      priceFrom: 549,
+      features: ['Cards', 'Filtros', 'WhatsApp'],
     },
     {
       id: 'loja',
-      title: 'Loja / Catálogo',
-      tag: 'Produtos',
-      desc: 'Vitrine de produtos com CTA',
-      highlights: ['Categorias', 'Produtos', 'Comprar no WhatsApp'],
+      title: 'Modelo Loja/Catálogo',
+      category: 'Produtos',
+      desc: 'Vitrine com categorias e CTA',
+      priceFrom: 599,
+      features: ['Categorias', 'Produtos', 'Comprar no WhatsApp'],
     },
     {
       id: 'portfolio',
-      title: 'Portfólio',
-      tag: 'Pessoal',
-      desc: 'Perfeito para freelancer',
-      highlights: ['Projetos', 'Sobre', 'Contato'],
+      title: 'Modelo Portfólio',
+      category: 'Pessoal',
+      desc: 'Para freelancer e profissional liberal',
+      priceFrom: 249,
+      features: ['Projetos', 'Sobre', 'Contato'],
     },
     {
       id: 'evento',
-      title: 'Eventos',
-      tag: 'Landing',
-      desc: 'Inscrição e informações',
-      highlights: ['Programação', 'Local', 'Ingresso/WhatsApp'],
+      title: 'Modelo Eventos',
+      category: 'Landing',
+      desc: 'Inscrição, programação e informações',
+      priceFrom: 299,
+      features: ['Programação', 'Local', 'Ingresso/WhatsApp'],
     },
   ] as const
 
+  const categories = ['Todos', 'Serviços', 'Profissionais', 'Produtos', 'Cardápio', 'Vitrine', 'Pessoal', 'Landing'] as const
+
   return (
-    <div className="page">
-      <header className="header">
-        <div>
-          <div className="kicker">Vitrine de modelos</div>
-          <h1>Escolha um modelo e compre no WhatsApp</h1>
-          <p className="subtitle">
-            Aqui estão alguns estilos de site para você escolher. Todos têm botão de WhatsApp e
-            ficam responsivos (celular/PC). Clique em <strong>Comprar agora</strong> no modelo que
-            você gostou.
-          </p>
+    <div className="shop">
+      <header className="shopHeader">
+        <div className="brand">
+          <div className="brandMark" aria-hidden="true" />
+          <div>
+            <div className="brandName">Storedp Sites</div>
+            <div className="brandSub">Modelos prontos • Personalização • WhatsApp</div>
+          </div>
         </div>
-        <div className="headerActions">
-          <a className="btn btnPrimary" href={waLink('Quero escolher um modelo')} target="_blank" rel="noreferrer">
-            Comprar agora
-          </a>
-          <a className="btn" href="#modelos">
-            Ver modelos
+
+        <div className="shopSearch" role="search" aria-label="Buscar modelos">
+          <input className="searchInput" placeholder="Buscar modelo (ex: loja, clínica, barbearia)..." />
+          <a className="btn btnPrimary" href={waLink('Quero comprar um site')} target="_blank" rel="noreferrer">
+            Comprar no WhatsApp
           </a>
         </div>
       </header>
 
-      <main className="grid">
-        <section className="card heroCard">
-          <div className="cardTop">
-            <h2>Como funciona</h2>
-            <span className="pill">Simples</span>
+      <main className="shopMain">
+        <aside className="filters" aria-label="Categorias">
+          <div className="filtersTitle">Categorias</div>
+          <div className="filtersList">
+            {categories.map((c) => (
+              <a key={c} className="filterPill" href="#produtos">
+                {c}
+              </a>
+            ))}
           </div>
-          <ul className="list">
-            <li>Você escolhe um modelo (abaixo)</li>
-            <li>Me chama no WhatsApp e manda seu nome + tipo de negócio</li>
-            <li>Eu personalizo com suas cores, logo, textos e links</li>
-            <li>Eu publico na Vercel e te entrego o link</li>
-          </ul>
-          <div className="row">
-            <a className="btn btnPrimary" href={waLink('Quero um site (meu modelo é...)')} target="_blank" rel="noreferrer">
-              Comprar agora
-            </a>
-            <a className="btn" href="#modelos">
-              Ver modelos
-            </a>
-          </div>
-        </section>
 
-        <section className="card">
-          <div className="cardTop">
-            <h2>Entrega</h2>
-            <span className="pill">Rápido</span>
+          <div className="filtersTitle">Entrega</div>
+          <div className="filtersNote">
+            Escolheu o modelo? Eu personalizo com seu logo, cores e textos e publico na Vercel.
           </div>
-          <div className="bigValue">Feito para vender</div>
-          <p className="muted">
-            Todos os modelos têm foco em conversão: botões de WhatsApp, seção de serviços/produtos,
-            prova social (depoimentos) e contato claro.
-          </p>
-        </section>
+        </aside>
 
-        <section id="modelos" className="card showcase">
-          <div className="cardTop">
-            <h2>Modelos (amostras)</h2>
-            <span className="pill">Escolha 1</span>
+        <section id="produtos" className="products">
+          <div className="productsTop">
+            <div>
+              <h1 className="shopTitle">Vitrine de modelos</h1>
+              <p className="subtitle">
+                Escolha um “produto” (modelo de site) e finalize direto no WhatsApp.
+              </p>
+            </div>
+            <div className="badgeRow">
+              <span className="badge">Pagamento via WhatsApp</span>
+              <span className="badge">Entrega rápida</span>
+              <span className="badge">Mobile first</span>
+            </div>
           </div>
-          <div className="showcaseGrid">
-            {models.map((m, idx) => (
-              <article key={m.id} className="modelCard">
-                <div className={`modelThumb thumb${(idx % 6) + 1}`} aria-hidden="true" />
-                <div className="modelBody">
-                  <div className="modelTop">
-                    <div>
-                      <div className="modelTag">{m.tag}</div>
-                      <div className="modelTitle">{m.title}</div>
-                      <div className="modelDesc">{m.desc}</div>
-                    </div>
+
+          <div className="productGrid">
+            {products.map((p, idx) => (
+              <article key={p.id} className="productCard">
+                <div className={`productThumb thumb${(idx % 6) + 1}`} aria-hidden="true" />
+                <div className="productBody">
+                  <div className="productMeta">
+                    <span className="productCategory">{p.category}</span>
+                    <span className="productRating" aria-label="Avaliação 5 estrelas">
+                      ★★★★★
+                    </span>
                   </div>
-                  <ul className="modelHighlights">
-                    {m.highlights.map((h) => (
-                      <li key={h}>{h}</li>
+                  <div className="productTitle">{p.title}</div>
+                  <div className="productDesc">{p.desc}</div>
+
+                  <div className="productPrice">
+                    <span className="priceFrom">a partir de</span>
+                    <span className="priceValue">R$ {p.priceFrom}</span>
+                  </div>
+
+                  <ul className="productFeatures">
+                    {p.features.map((f) => (
+                      <li key={f}>{f}</li>
                     ))}
                   </ul>
+
                   <div className="row">
-                    <a className="btn btnPrimary" href={waLink(m.title)} target="_blank" rel="noreferrer">
+                    <a className="btn btnPrimary" href={waLink(p.title)} target="_blank" rel="noreferrer">
                       Comprar agora
                     </a>
-                    <a className="btn" href={waLink(`${m.title} (quero detalhes)`)} target="_blank" rel="noreferrer">
-                      Pedir detalhes
+                    <a className="btn" href={waLink(`${p.title} (quero ver detalhes)`)} target="_blank" rel="noreferrer">
+                      Ver detalhes
                     </a>
                   </div>
                 </div>
@@ -158,34 +166,13 @@ export default function Page() {
             ))}
           </div>
         </section>
-
-        <section className="card faq">
-          <div className="cardTop">
-            <h2>Dúvidas rápidas</h2>
-            <span className="pill">FAQ</span>
-          </div>
-          <div className="faqGrid">
-            <div className="faqItem">
-              <div className="faqQ">Quanto tempo demora?</div>
-              <div className="faqA">Depende do modelo e do conteúdo, mas costuma ser rápido.</div>
-            </div>
-            <div className="faqItem">
-              <div className="faqQ">Preciso ter domínio?</div>
-              <div className="faqA">Não. Você pode comprar depois; eu publico na Vercel primeiro.</div>
-            </div>
-            <div className="faqItem">
-              <div className="faqQ">Consigo mudar textos e fotos?</div>
-              <div className="faqA">Sim — você me envia e eu ajusto tudo no seu modelo.</div>
-            </div>
-          </div>
-        </section>
       </main>
 
-      <footer className="footer">
+      <footer className="shopFooter">
         <span>
           WhatsApp: <span className="kbd">(19) 98959-9014</span>
         </span>
-        <a className="chip" href={waLink('Dúvidas')} target="_blank" rel="noreferrer">
+        <a className="chip" href={waLink('Quero um orçamento')} target="_blank" rel="noreferrer">
           Falar agora
         </a>
       </footer>
