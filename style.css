@@ -870,3 +870,38 @@ body {
   }
 }
 
+@media (max-width: 520px) {
+  .shop {
+    padding: 16px 12px;
+  }
+
+  .prankCard {
+    aspect-ratio: auto !important;
+    max-height: 90vh;
+    overflow: hidden;
+    padding: 14px !important;
+  }
+
+  .prankCard #prankForm {
+    padding: 14px !important;
+  }
+
+  .prankGrid {
+    gap: 10px !important;
+  }
+
+  .field.small {
+    max-width: none !important;
+  }
+
+  .modalContent {
+    max-width: 92vw;
+    max-height: 90vh;
+    overflow: auto;
+  }
+
+  .modalImg {
+    max-height: 36vh;
+  }
+}
+
