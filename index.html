@@ -3,106 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Descubra se seu cartão foi clonado (site de zoeira)."
-    />
-    <title>Detector de Cartão Clonado (Zoera)</title>
+    <meta name="description" content="PEDRO LINDO - site RGB com arco-iris animado" />
+    <title>PEDRO LINDO</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div class="shop">
-      <header class="shopHeader">
-        <div class="brand">
-          <div class="brandMark" aria-hidden="true"></div>
-          <div class="brandText">
-            <div class="brandName">Detector de Cartão Clonado</div>
-            <div class="brandSub">Central de segurança 100% duvidosa</div>
-          </div>
-        </div>
-        <div class="shopSearch">
-          <span class="headerBadge">ATENÇÃO: Site de zoeira, não insira dados reais.</span>
-        </div>
-      </header>
+    <canvas id="bg" aria-hidden="true"></canvas>
 
-      <main class="prankMain">
-          <section class="prankCard">
-          <form id="prankForm" autocomplete="off" novalidate>
-            <div class="prankGrid">
-              <div class="field">
-                <label for="nome">Nome impresso no cartão</label>
-                <input id="nome" name="nome" placeholder="FULANO DE TAL" />
-              </div>
-
-              <div class="field">
-                <label for="numero">Número completo do cartão</label>
-                <input
-                  id="numero"
-                  name="numero"
-                  inputmode="numeric"
-                  maxlength="19"
-                  placeholder="0000 0000 0000 0000"
-                />
-              </div>
-
-              <div class="field small">
-                <label for="validade">Validade</label>
-                <input id="validade" name="validade" placeholder="12/34" />
-              </div>
-
-              <div class="field small">
-                <label for="cvv">CVV (três numerinhos atrás)</label>
-                <input
-                  id="cvv"
-                  name="cvv"
-                  inputmode="numeric"
-                  maxlength="4"
-                  placeholder="123"
-                />
-              </div>
-
-              <div class="field">
-                <label for="senha">Senha do app do banco</label>
-                <input
-                  id="senha"
-                  name="senha"
-                  type="password"
-                  placeholder="✱✱✱✱✱✱"
-                />
-              </div>
-
-              <div class="field">
-                <label for="limite">Limite aproximado</label>
-                <input
-                  id="limite"
-                  name="limite"
-                  inputmode="numeric"
-                  placeholder="Ex: 2.500"
-                />
-              </div>
-            </div>
-
-            <button class="btn btnPrimary prankSubmit" type="submit">
-              Analisar se foi clonado
-            </button>
-          </form>
-        </section>
-
-        <div id="modal" class="modal" aria-hidden="true">
-          <div class="modalContent" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-            <button type="button" id="modalClose" class="modalClose" aria-label="Fechar">
-              Fechar
-            </button>
-            <img id="modalImg" class="modalImg" alt="Imagem do resultado" />
-            <div id="modalTitle" class="modalTitle">Você é betinha</div>
-            <div class="modalSub">
-              Isso é uma brincadeira. Não use este site para dados reais.
-            </div>
-          </div>
-        </div>
-      </main>
-
-    </div>
+    <main class="center">
+      <h1 class="title">PEDRO LINDO</h1>
+    </main>
 
     <script src="./script.js" defer></script>
   </body>
