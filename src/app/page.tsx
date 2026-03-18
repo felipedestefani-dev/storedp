@@ -1,5 +1,6 @@
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
-import './App.css'
 
 type Quote = { text: string; author: string }
 type HistoryEntry = {
@@ -84,7 +85,7 @@ function makeId() {
 
 const STORAGE_KEY = 'storedp.random-studio.history.v1'
 
-function App() {
+export default function Page() {
   const [color, setColor] = useState(() => randomHexColor())
   const [vibe, setVibe] = useState(() => randomItem(VIBES))
   const [number, setNumber] = useState(() => randomInt(1, 9999))
@@ -151,11 +152,11 @@ function App() {
     <div className="page">
       <header className="header">
         <div>
-          <div className="kicker">React • Vite</div>
+          <div className="kicker">Next.js • React</div>
           <h1>Random Studio</h1>
           <p className="subtitle">
-            Um site aleatório para gerar cor, frase, número e “vibe”. Salve seus
-            favoritos e copie com um clique.
+            Um site aleatório para gerar cor, frase, número e “vibe”. Salve seus favoritos e copie
+            com um clique.
           </p>
         </div>
         <div className="headerActions">
@@ -287,11 +288,11 @@ function App() {
 
       <footer className="footer">
         <span>
-          Dica: aperte <span className="kbd">Surprise me</span> e depois <span className="kbd">Salvar</span>.
+          Dica: aperte <span className="kbd">Surprise me</span> e depois{' '}
+          <span className="kbd">Salvar</span>.
         </span>
       </footer>
     </div>
   )
 }
 
-export default App
