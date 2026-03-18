@@ -90,7 +90,7 @@ p {
   margin: 0;
 }
 
-/* UI styles (ported from Vite version) */
+/* UI styles */
 .page {
   padding: 48px 28px 28px;
   width: min(1100px, 100%);
@@ -146,10 +146,8 @@ p {
   overflow: hidden;
 }
 
-.colorCard {
-  grid-column: span 6;
-  border: none;
-  position: relative;
+.heroCard {
+  grid-column: span 12;
 }
 
 .cardTop {
@@ -239,94 +237,83 @@ p {
   color: var(--text-h);
 }
 
-.btnOnColor {
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.14);
-  color: inherit;
-}
-
-.quote {
-  margin: 0 0 14px;
-  color: var(--text-h);
-  font-size: 18px;
-  line-height: 150%;
-}
-
-.quote footer {
-  margin-top: 10px;
-  font-size: 14px;
-  color: color-mix(in oklab, var(--text) 92%, transparent);
-}
-
-.history {
-  grid-column: span 12;
-}
-
 .muted {
   color: color-mix(in oklab, var(--text) 92%, transparent);
 }
 
-.historyList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.list {
+  margin: 0 0 16px;
+  padding-left: 18px;
+  color: var(--text-h);
+}
+
+.list li {
+  margin: 8px 0;
+}
+
+.portfolioGrid {
+  margin: 4px 0 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.miniCard {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  background: color-mix(in oklab, var(--bg) 92%, #fff 8%);
+}
+
+.miniTitle {
+  font-family: var(--mono);
+  color: var(--text-h);
+  margin-bottom: 6px;
+}
+
+.miniDesc {
+  font-size: 14px;
+  color: color-mix(in oklab, var(--text) 92%, transparent);
+}
+
+.plans {
+  grid-column: span 12;
+}
+
+.plansGrid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.plan {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  background: color-mix(in oklab, var(--bg) 92%, #fff 8%);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.historyItem {
-  display: grid;
-  grid-template-columns: 40px 1fr auto;
-  gap: 12px;
-  align-items: center;
-  padding: 10px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: color-mix(in oklab, var(--bg) 92%, #fff 8%);
+.planFeatured {
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--border));
+  box-shadow: var(--shadow);
 }
 
-.historySwatch {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  cursor: pointer;
-}
-
-.historyMeta {
-  min-width: 0;
-}
-
-.historyLine {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: var(--text-h);
-  min-width: 0;
-  flex-wrap: wrap;
-}
-
-.historySub {
-  margin-top: 4px;
-  font-size: 14px;
-  color: color-mix(in oklab, var(--text) 92%, transparent);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.historyActions {
-  display: flex;
-  gap: 8px;
-}
-
-.mono {
+.planName {
   font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: color-mix(in oklab, var(--text) 90%, transparent);
 }
 
-.dot {
-  opacity: 0.55;
+.planPrice {
+  font-size: 18px;
+  color: var(--text-h);
+  font-weight: 560;
 }
 
 .footer {
@@ -365,6 +352,14 @@ p {
 
   .card {
     grid-column: span 12;
+  }
+
+  .portfolioGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .plansGrid {
+    grid-template-columns: 1fr;
   }
 }
 
