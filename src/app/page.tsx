@@ -1,30 +1,90 @@
 export default function Page() {
   const phone = '5519989599014'
 
-  const waLink = (plan: string) => {
+  const waLink = (model: string) => {
     const text = encodeURIComponent(
-      `Olá! Quero comprar um site (${plan}). Meu nome é: `
+      `Olá! Quero comprar um site (modelo: ${model}). Meu nome é: `
     )
     return `https://wa.me/${phone}?text=${text}`
   }
+
+  const models = [
+    {
+      id: 'barbearia',
+      title: 'Barbearia / Salão',
+      tag: 'Serviço',
+      desc: 'Agendamento + galeria + WhatsApp',
+      highlights: ['Home + Serviços', 'Galeria', 'Botão WhatsApp'],
+    },
+    {
+      id: 'clinica',
+      title: 'Clínica / Estética',
+      tag: 'Profissional',
+      desc: 'Autoridade e conversão',
+      highlights: ['Sobre', 'Procedimentos', 'Depoimentos'],
+    },
+    {
+      id: 'mecanica',
+      title: 'Mecânica / Auto',
+      tag: 'Local',
+      desc: 'Orçamento rápido no WhatsApp',
+      highlights: ['Serviços', 'Mapa', 'CTA fixo'],
+    },
+    {
+      id: 'restaurante',
+      title: 'Restaurante / Pizzaria',
+      tag: 'Cardápio',
+      desc: 'Menu com botão “Pedir agora”',
+      highlights: ['Cardápio', 'Horários', 'Pedido via WhatsApp'],
+    },
+    {
+      id: 'imobiliaria',
+      title: 'Imobiliária',
+      tag: 'Vitrine',
+      desc: 'Destaques + contato rápido',
+      highlights: ['Cards de imóveis', 'Filtros', 'WhatsApp'],
+    },
+    {
+      id: 'loja',
+      title: 'Loja / Catálogo',
+      tag: 'Produtos',
+      desc: 'Vitrine de produtos com CTA',
+      highlights: ['Categorias', 'Produtos', 'Comprar no WhatsApp'],
+    },
+    {
+      id: 'portfolio',
+      title: 'Portfólio',
+      tag: 'Pessoal',
+      desc: 'Perfeito para freelancer',
+      highlights: ['Projetos', 'Sobre', 'Contato'],
+    },
+    {
+      id: 'evento',
+      title: 'Eventos',
+      tag: 'Landing',
+      desc: 'Inscrição e informações',
+      highlights: ['Programação', 'Local', 'Ingresso/WhatsApp'],
+    },
+  ] as const
 
   return (
     <div className="page">
       <header className="header">
         <div>
-          <div className="kicker">Sites • Landing Pages • Loja</div>
-          <h1>Seu site no ar em poucos dias</h1>
+          <div className="kicker">Vitrine de modelos</div>
+          <h1>Escolha um modelo e compre no WhatsApp</h1>
           <p className="subtitle">
-            Eu crio sites rápidos, bonitos e responsivos para você vender mais. Clique em{' '}
-            <strong>Comprar agora</strong> e fale comigo no WhatsApp.
+            Aqui estão alguns estilos de site para você escolher. Todos têm botão de WhatsApp e
+            ficam responsivos (celular/PC). Clique em <strong>Comprar agora</strong> no modelo que
+            você gostou.
           </p>
         </div>
         <div className="headerActions">
-          <a className="btn btnPrimary" href={waLink('Orçamento rápido')} target="_blank" rel="noreferrer">
+          <a className="btn btnPrimary" href={waLink('Quero escolher um modelo')} target="_blank" rel="noreferrer">
             Comprar agora
           </a>
-          <a className="btn" href="#planos">
-            Ver planos
+          <a className="btn" href="#modelos">
+            Ver modelos
           </a>
         </div>
       </header>
@@ -32,105 +92,90 @@ export default function Page() {
       <main className="grid">
         <section className="card heroCard">
           <div className="cardTop">
-            <h2>O que você recebe</h2>
-            <span className="pill">Entrega rápida</span>
+            <h2>Como funciona</h2>
+            <span className="pill">Simples</span>
           </div>
           <ul className="list">
-            <li>Design moderno e responsivo (celular, tablet e PC)</li>
-            <li>Site rápido (Next.js) e otimizado para SEO básico</li>
-            <li>Botões de WhatsApp/Instagram e formulário de contato</li>
-            <li>Hospedagem na Vercel e domínio configurado (se você já tiver)</li>
+            <li>Você escolhe um modelo (abaixo)</li>
+            <li>Me chama no WhatsApp e manda seu nome + tipo de negócio</li>
+            <li>Eu personalizo com suas cores, logo, textos e links</li>
+            <li>Eu publico na Vercel e te entrego o link</li>
           </ul>
           <div className="row">
-            <a className="btn btnPrimary" href={waLink('Orçamento rápido')} target="_blank" rel="noreferrer">
+            <a className="btn btnPrimary" href={waLink('Quero um site (meu modelo é...)')} target="_blank" rel="noreferrer">
               Comprar agora
             </a>
-            <a className="btn" href="#portfolio">
-              Ver exemplos
+            <a className="btn" href="#modelos">
+              Ver modelos
             </a>
           </div>
         </section>
 
         <section className="card">
           <div className="cardTop">
-            <h2>Perfeito para</h2>
-            <span className="pill">Negócios locais</span>
+            <h2>Entrega</h2>
+            <span className="pill">Rápido</span>
           </div>
-          <div className="bigValue">Converter visitas em clientes</div>
+          <div className="bigValue">Feito para vender</div>
           <p className="muted">
-            Ideal para barbearia, estética, mecânica, loja, prestadores de serviço, eventos e
-            qualquer negócio que precisa de presença online profissional.
+            Todos os modelos têm foco em conversão: botões de WhatsApp, seção de serviços/produtos,
+            prova social (depoimentos) e contato claro.
           </p>
         </section>
 
-        <section id="portfolio" className="card">
+        <section id="modelos" className="card showcase">
           <div className="cardTop">
-            <h2>Portfólio</h2>
-            <span className="pill">Exemplos</span>
+            <h2>Modelos (amostras)</h2>
+            <span className="pill">Escolha 1</span>
           </div>
-          <div className="portfolioGrid">
-            <div className="miniCard">
-              <div className="miniTitle">Landing Page</div>
-              <div className="miniDesc">Serviço + CTA WhatsApp</div>
-            </div>
-            <div className="miniCard">
-              <div className="miniTitle">Site Institucional</div>
-              <div className="miniDesc">Sobre, serviços, contato</div>
-            </div>
-            <div className="miniCard">
-              <div className="miniTitle">Cardápio / Catálogo</div>
-              <div className="miniDesc">Itens e links de pedido</div>
-            </div>
+          <div className="showcaseGrid">
+            {models.map((m, idx) => (
+              <article key={m.id} className="modelCard">
+                <div className={`modelThumb thumb${(idx % 6) + 1}`} aria-hidden="true" />
+                <div className="modelBody">
+                  <div className="modelTop">
+                    <div>
+                      <div className="modelTag">{m.tag}</div>
+                      <div className="modelTitle">{m.title}</div>
+                      <div className="modelDesc">{m.desc}</div>
+                    </div>
+                  </div>
+                  <ul className="modelHighlights">
+                    {m.highlights.map((h) => (
+                      <li key={h}>{h}</li>
+                    ))}
+                  </ul>
+                  <div className="row">
+                    <a className="btn btnPrimary" href={waLink(m.title)} target="_blank" rel="noreferrer">
+                      Comprar agora
+                    </a>
+                    <a className="btn" href={waLink(`${m.title} (quero detalhes)`)} target="_blank" rel="noreferrer">
+                      Pedir detalhes
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
-          <p className="muted">
-            Quer algo específico? Me chama no WhatsApp que eu te mostro modelos e ideias.
-          </p>
         </section>
 
-        <section id="planos" className="card plans">
+        <section className="card faq">
           <div className="cardTop">
-            <h2>Planos</h2>
-            <span className="pill">Compre agora</span>
+            <h2>Dúvidas rápidas</h2>
+            <span className="pill">FAQ</span>
           </div>
-
-          <div className="plansGrid">
-            <div className="plan">
-              <div className="planName">Starter</div>
-              <div className="planPrice">Site de 1 página</div>
-              <ul className="list">
-                <li>Seções: hero, benefícios, serviços, contato</li>
-                <li>Botão WhatsApp + redes sociais</li>
-                <li>Deploy na Vercel</li>
-              </ul>
-              <a className="btn btnPrimary" href={waLink('Starter')} target="_blank" rel="noreferrer">
-                Comprar agora
-              </a>
+          <div className="faqGrid">
+            <div className="faqItem">
+              <div className="faqQ">Quanto tempo demora?</div>
+              <div className="faqA">Depende do modelo e do conteúdo, mas costuma ser rápido.</div>
             </div>
-
-            <div className="plan planFeatured">
-              <div className="planName">Pro</div>
-              <div className="planPrice">Site completo</div>
-              <ul className="list">
-                <li>Até 5 páginas (Home, Sobre, Serviços, Portfólio, Contato)</li>
-                <li>SEO básico + performance</li>
-                <li>Formulário de contato</li>
-              </ul>
-              <a className="btn btnPrimary" href={waLink('Pro')} target="_blank" rel="noreferrer">
-                Comprar agora
-              </a>
+            <div className="faqItem">
+              <div className="faqQ">Preciso ter domínio?</div>
+              <div className="faqA">Não. Você pode comprar depois; eu publico na Vercel primeiro.</div>
             </div>
-
-            <div className="plan">
-              <div className="planName">Loja / Catálogo</div>
-              <div className="planPrice">Vitrine de produtos</div>
-              <ul className="list">
-                <li>Catálogo com categorias</li>
-                <li>Botão “comprar” para WhatsApp</li>
-                <li>Integração com links de pagamento (opcional)</li>
-              </ul>
-              <a className="btn btnPrimary" href={waLink('Loja / Catálogo')} target="_blank" rel="noreferrer">
-                Comprar agora
-              </a>
+            <div className="faqItem">
+              <div className="faqQ">Consigo mudar textos e fotos?</div>
+              <div className="faqA">Sim — você me envia e eu ajusto tudo no seu modelo.</div>
             </div>
           </div>
         </section>
