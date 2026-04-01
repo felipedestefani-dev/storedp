@@ -1,60 +1,21 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1'
+const STORAGE_KEY = 'storedp-assignments'
 
-/* Supabase — mesmos valores em auth-callback.html (confirmação de e-mail) */
-const SUPABASE_URL = 'https://eqimwuwbzwfrebzjggux.supabase.co'
-const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxaW13dXdiendmcmViempnZ3V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDg1OTEsImV4cCI6MjA5MDU4NDU5MX0.HgjF-FFRxK2c0JqUY2XjsYLfPpupt0eZ94FFugVetgc'
-
-let supabase
 let currentFilter = 'todos'
 let assignments = []
 
-function showScreen(id) {
-  for (const el of document.querySelectorAll('.screen')) {
-    el.hidden = el.id !== id
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
   }
 }
 
-function setAuthBanner(msg, isError, opts = {}) {
-  const showResend = Boolean(opts.showResend)
-  const el = document.getElementById('auth-banner')
-  const wrap = document.getElementById('auth-resend-wrap')
-  if (!msg) {
-    el.hidden = true
-    if (wrap) wrap.hidden = true
-    return
-  }
-  el.textContent = msg
-  el.className = `banner ${isError ? 'bannerError' : 'bannerInfo'}`
-  el.hidden = false
-  if (wrap) wrap.hidden = !showResend
-}
-
-/**
- * Traduz erros do Supabase. O login falha se o e-mail não foi confirmado (configuração no painel).
- * @returns {{ message: string, showResend: boolean }}
- */
-function parseAuthError(raw) {
-  if (!raw) return { message: 'Algo deu errado. Tente de novo.', showResend: false }
-  const s = String(raw)
-  if (/security purposes|only request this after|rate limit|too many requests|429|email rate limit/i.test(s)) {
-    return {
-      message:
-        'Muitas tentativas seguidas. Aguarde cerca de 1 minuto e tente de novo. (Authentication → Rate Limits no Supabase.)',
-      showResend: false,
-    }
-  }
-  if (/invalid login credentials|invalid email or password/i.test(s)) {
-    return { message: 'E-mail ou senha incorretos.', showResend: false }
-  }
-  if (/email not confirmed|not confirmed|confirm your email|signup_not_completed|Email link is invalid or has expired/i.test(s)) {
-    return {
-      message:
-        'Este e-mail ainda não foi confirmado (por isso o login falha). Veja o spam. Ou use o botão abaixo para reenviar. No Supabase: Authentication → Providers → Email → desative "Confirm email" para entrar sem precisar do e-mail.',
-      showResend: true,
-    }
-  }
-  return { message: s, showResend: false }
+function saveToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments))
 }
 
 function setBoardError(msg) {
@@ -144,196 +105,46 @@ function updateStats() {
   document.getElementById('board-stats').textContent = `${pending} pendente(s) · ${assignments.length} no total`
 }
 
-async function loadAssignments() {
+function loadAssignments() {
   setBoardError('')
-  const { data, error } = await supabase
-    .from('assignments')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  if (error) {
-    const hint =
-      error.message && error.message.includes('relation')
-        ? 'Crie a tabela no Supabase (veja supabase/migrations/001_assignments.sql).'
-        : error.message
-    setBoardError(hint)
-    assignments = []
-  } else {
-    assignments = data ?? []
-  }
+  assignments = loadFromStorage()
+  assignments.sort((a, b) => {
+    const ta = a.created_at || ''
+    const tb = b.created_at || ''
+    return tb.localeCompare(ta)
+  })
   updateStats()
   renderList()
 }
 
-async function toggleDone(a) {
+function toggleDone(a) {
   setBoardError('')
-  const { error } = await supabase.from('assignments').update({ completed: !a.completed }).eq('id', a.id)
-  if (error) {
-    setBoardError(error.message)
-    return
-  }
-  await loadAssignments()
+  const i = assignments.findIndex((x) => x.id === a.id)
+  if (i === -1) return
+  assignments[i] = { ...assignments[i], completed: !assignments[i].completed }
+  saveToStorage()
+  loadAssignments()
 }
 
-async function removeItem(id) {
+function removeItem(id) {
   if (!confirm('Remover este item?')) return
   setBoardError('')
-  const { error } = await supabase.from('assignments').delete().eq('id', id)
-  if (error) {
-    setBoardError(error.message)
-    return
-  }
-  await loadAssignments()
+  assignments = assignments.filter((x) => x.id !== id)
+  saveToStorage()
+  loadAssignments()
 }
 
-async function showDashboard(user) {
-  document.getElementById('user-email').textContent = user.email ?? ''
-  showScreen('screen-dashboard')
-  assignments = []
-  updateStats()
-  await loadAssignments()
+function newId() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID()
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-function showLanding() {
-  showScreen('screen-landing')
-}
+function main() {
+  loadAssignments()
 
-function showAuth() {
-  setAuthBanner('', true)
-  showScreen('screen-auth')
-}
-
-async function main() {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    showScreen('screen-config-missing')
-    return
-  }
-
-  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  if (session?.user) {
-    await showDashboard(session.user)
-  } else {
-    showLanding()
-  }
-
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session?.user) {
-      await showDashboard(session.user)
-    } else if (event === 'SIGNED_OUT') {
-      showLanding()
-    }
-  })
-
-  document.getElementById('btn-open-auth').addEventListener('click', showAuth)
-  document.getElementById('btn-back-landing').addEventListener('click', showLanding)
-
-  let mode = 'login'
-  const tabLogin = document.getElementById('tab-login')
-  const tabRegister = document.getElementById('tab-register')
-  const btnSubmit = document.getElementById('btn-auth-submit')
-
-  function setMode(m) {
-    mode = m
-    tabLogin.classList.toggle('authTabActive', m === 'login')
-    tabRegister.classList.toggle('authTabActive', m === 'register')
-    btnSubmit.textContent = m === 'login' ? 'Entrar' : 'Cadastrar'
-    document.getElementById('password').autocomplete = m === 'login' ? 'current-password' : 'new-password'
-    setAuthBanner('', true)
-  }
-
-  tabLogin.addEventListener('click', () => setMode('login'))
-  tabRegister.addEventListener('click', () => setMode('register'))
-
-  document.getElementById('btn-resend-confirm').addEventListener('click', async () => {
-    const email = document.getElementById('email').value.trim()
-    const redirectTo = new URL('auth-callback.html', window.location.href).href
-    if (!email) {
-      setAuthBanner('Digite seu e-mail no campo acima.', true)
-      return
-    }
-    const btn = document.getElementById('btn-resend-confirm')
-    btn.disabled = true
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email,
-      options: { emailRedirectTo: redirectTo },
-    })
-    btn.disabled = false
-    if (error) {
-      const parsed = parseAuthError(error.message)
-      setAuthBanner(parsed.message, true, { showResend: parsed.showResend })
-      return
-    }
-    setAuthBanner('Enviamos outro e-mail. Confira a caixa de entrada e o spam.', false)
-    document.getElementById('auth-resend-wrap').hidden = true
-  })
-
-  let authSubmitting = false
-  document.getElementById('form-auth').addEventListener('submit', async (e) => {
-    e.preventDefault()
-    if (authSubmitting) return
-    authSubmitting = true
-    btnSubmit.disabled = true
-    const prevLabel = btnSubmit.textContent
-    btnSubmit.textContent = 'Aguarde…'
-    setAuthBanner('', true)
-
-    try {
-      const email = document.getElementById('email').value.trim()
-      const password = document.getElementById('password').value
-      const redirectTo = new URL('auth-callback.html', window.location.href).href
-
-      if (mode === 'register') {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: redirectTo },
-        })
-        if (error) {
-          const parsed = parseAuthError(error.message)
-          setAuthBanner(parsed.message, true, { showResend: parsed.showResend })
-          return
-        }
-        if (data.session && data.user) {
-          await showDashboard(data.user)
-          return
-        }
-        setAuthBanner(
-          'Conta criada. Abra o link de confirmação no e-mail (confira o spam). Se nada chegar: no Supabase, Authentication → Providers → Email, desative "Confirm email" e cadastre de novo ou confirme o usuário em Authentication → Users.',
-          false
-        )
-        return
-      }
-
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) {
-        const parsed = parseAuthError(error.message)
-        setAuthBanner(parsed.message, true, { showResend: parsed.showResend })
-        return
-      }
-    } finally {
-      authSubmitting = false
-      btnSubmit.disabled = false
-      btnSubmit.textContent = prevLabel
-    }
-  })
-
-  document.getElementById('btn-logout').addEventListener('click', async () => {
-    await supabase.auth.signOut()
-    showLanding()
-  })
-
-  document.getElementById('form-add').addEventListener('submit', async (e) => {
+  document.getElementById('form-add').addEventListener('submit', (e) => {
     e.preventDefault()
     setBoardError('')
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) return
 
     const title = document.getElementById('titulo').value.trim()
     if (!title) return
@@ -342,17 +153,27 @@ async function main() {
     const due = document.getElementById('entrega').value
     const notes = document.getElementById('obs').value.trim()
 
-    const { error } = await supabase.from('assignments').insert({
-      user_id: user.id,
+    const row = {
+      id: newId(),
       title,
       notes,
       kind,
       due_date: due || null,
       completed: false,
-    })
+      created_at: new Date().toISOString(),
+    }
 
-    if (error) {
-      setBoardError(error.message)
+    try {
+      assignments.unshift(row)
+      saveToStorage()
+    } catch (err) {
+      setBoardError(
+        err instanceof Error && err.name === 'QuotaExceededError'
+          ? 'Armazenamento do navegador cheio. Libere espaço ou remova itens antigos.'
+          : 'Não foi possível salvar.'
+      )
+      assignments = loadFromStorage()
+      loadAssignments()
       return
     }
 
@@ -360,7 +181,7 @@ async function main() {
     document.getElementById('entrega').value = ''
     document.getElementById('obs').value = ''
     document.getElementById('tipo').value = 'trabalho'
-    await loadAssignments()
+    loadAssignments()
   })
 
   document.querySelectorAll('.filterChip').forEach((btn) => {
@@ -377,13 +198,4 @@ async function main() {
   })
 }
 
-main().catch((err) => {
-  console.error(err)
-  const el = document.getElementById('auth-banner')
-  if (el) {
-    el.textContent = String(err.message || err)
-    el.className = 'banner bannerError'
-    el.hidden = false
-    showScreen('screen-auth')
-  }
-})
+main()
