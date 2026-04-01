@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirmando login…</title>
+  </head>
+  <body>
+    <p style="font-family: system-ui; padding: 2rem">Confirmando…</p>
+    <script type="module">
+      import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1'
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js'
+
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      const params = new URLSearchParams(location.search)
+      const code = params.get('code')
+      if (code) {
+        await supabase.auth.exchangeCodeForSession(code)
+      }
+      location.replace(new URL('index.html', location.href).href)
+    </script>
+  </body>
+</html>

@@ -3,108 +3,148 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Descubra se seu cartão foi clonado (site de zoeira)."
+    <meta name="description" content="Organize lições e trabalhos escolares." />
+    <title>Lições e trabalhos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap"
+      rel="stylesheet"
     />
-    <title>Detector de Cartão Clonado (Zoera)</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div class="shop">
-      <header class="shopHeader">
-        <div class="brand">
-          <div class="brandMark" aria-hidden="true"></div>
-          <div class="brandText">
-            <div class="brandName">Detector de Cartão Clonado</div>
-            <div class="brandSub">Central de segurança 100% duvidosa</div>
-          </div>
+    <div id="app">
+      <section id="screen-landing" class="screen heroShell" hidden>
+        <div class="heroBackdrop" aria-hidden="true"></div>
+        <div class="heroContent">
+          <article class="heroCard heroCard--landing">
+            <span class="landingBadge" aria-hidden="true">📚</span>
+            <p class="landingKicker"><span class="landingKickerLine"></span> Organização escolar</p>
+            <h1 class="landingTitle">Lições e trabalhos em um só lugar</h1>
+            <p class="landingLead">
+              Adicione tarefas, marque como feitas e acesse com seu e-mail. Tudo simples, num painel só.
+            </p>
+            <button type="button" class="btn btnPrimary btnLg btnHero" id="btn-open-auth">
+              Entrar ou criar conta
+            </button>
+          </article>
         </div>
-        <div class="shopSearch">
-          <span class="headerBadge">ATENÇÃO: Site de zoeira, não insira dados reais.</span>
-        </div>
-      </header>
+      </section>
 
-      <main class="prankMain">
-          <section class="prankCard">
-          <form id="prankForm" autocomplete="off" novalidate>
-            <div class="prankGrid">
-              <div class="field">
-                <label for="nome">Nome impresso no cartão</label>
-                <input id="nome" name="nome" placeholder="FULANO DE TAL" />
+      <section id="screen-auth" class="screen heroShell" hidden>
+        <div class="heroBackdrop" aria-hidden="true"></div>
+        <div class="heroContent">
+          <article class="heroCard heroCard--auth">
+            <header class="authHeader">
+              <span class="landingBadge landingBadge--sm" aria-hidden="true">✉️</span>
+              <h1 class="authTitle">Acesse sua conta</h1>
+              <p class="authLead">Entre com e-mail e senha — ou crie uma conta nova.</p>
+            </header>
+            <div class="authCard card">
+              <div id="auth-banner" class="banner bannerError" role="alert" hidden></div>
+              <div class="authTabs" role="tablist">
+                <button type="button" class="authTab authTabActive" data-mode="login" id="tab-login">Já tenho conta</button>
+                <button type="button" class="authTab" data-mode="register" id="tab-register">Criar conta</button>
               </div>
-
-              <div class="field">
-                <label for="numero">Número completo do cartão</label>
-                <input
-                  id="numero"
-                  name="numero"
-                  inputmode="numeric"
-                  maxlength="19"
-                  placeholder="0000 0000 0000 0000"
-                />
-              </div>
-
-              <div class="field small">
-                <label for="validade">Validade</label>
-                <input id="validade" name="validade" placeholder="12/34" />
-              </div>
-
-              <div class="field small">
-                <label for="cvv">CVV (três numerinhos atrás)</label>
-                <input
-                  id="cvv"
-                  name="cvv"
-                  inputmode="numeric"
-                  maxlength="4"
-                  placeholder="123"
-                />
-              </div>
-
-              <div class="field">
-                <label for="senha">Senha do app do banco</label>
-                <input
-                  id="senha"
-                  name="senha"
-                  type="password"
-                  placeholder="✱✱✱✱✱✱"
-                />
-              </div>
-
-              <div class="field">
-                <label for="limite">Limite aproximado</label>
-                <input
-                  id="limite"
-                  name="limite"
-                  inputmode="numeric"
-                  placeholder="Ex: 2.500"
-                />
-              </div>
+              <form id="form-auth" class="formGrid authForm">
+                <div class="field">
+                  <label for="email">E-mail</label>
+                  <input id="email" type="email" autocomplete="email" required />
+                </div>
+                <div class="field">
+                  <label for="password">Senha</label>
+                  <input id="password" type="password" autocomplete="current-password" required minlength="6" />
+                </div>
+                <button type="submit" class="btn btnPrimary authSubmit" id="btn-auth-submit">Entrar</button>
+              </form>
+              <p class="authFooter"><button type="button" class="linkBtn" id="btn-back-landing">← Voltar ao início</button></p>
             </div>
+          </article>
+        </div>
+      </section>
 
-            <button class="btn btnPrimary prankSubmit" type="submit">
-              Analisar se foi clonado
-            </button>
-          </form>
-        </section>
-
-        <div id="modal" class="modal" aria-hidden="true">
-          <div class="modalContent" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-            <button type="button" id="modalClose" class="modalClose" aria-label="Fechar">
-              Fechar
-            </button>
-            <img id="modalImg" class="modalImg" alt="Imagem do resultado" />
-            <div id="modalTitle" class="modalTitle">Você é betinha</div>
-            <div class="modalSub">
-              Isso é uma brincadeira. Não use este site para dados reais.
+      <section id="screen-dashboard" class="screen" hidden>
+        <header class="appHeader">
+          <div class="appHeaderInner">
+            <span class="appLogo">Lições e trabalhos</span>
+            <div class="appHeaderRight">
+              <span class="appUser" id="user-email"></span>
+              <button type="button" class="btn btnGhost" id="btn-logout">Sair</button>
             </div>
           </div>
-        </div>
-      </main>
+        </header>
+        <div class="appMain">
+          <div class="board">
+            <div class="boardIntro">
+              <h1 class="boardTitle">Seu painel</h1>
+              <p class="boardSub" id="board-stats"></p>
+            </div>
+            <div id="board-error" class="banner bannerError" role="alert" hidden></div>
 
+            <section class="card formCard" aria-labelledby="add-heading">
+              <h2 id="add-heading" class="cardTitle">Adicionar</h2>
+              <form id="form-add" class="formGrid">
+                <div class="field">
+                  <label for="titulo">Título</label>
+                  <input id="titulo" name="titulo" placeholder="Ex.: Redação de história" required autocomplete="off" />
+                </div>
+                <div class="field">
+                  <label for="tipo">Tipo</label>
+                  <select id="tipo" name="tipo">
+                    <option value="lição">Lição</option>
+                    <option value="trabalho" selected>Trabalho</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="entrega">Entrega (opcional)</label>
+                  <input id="entrega" name="entrega" type="date" />
+                </div>
+                <div class="field fieldSpan">
+                  <label for="obs">Observações</label>
+                  <textarea id="obs" name="obs" rows="2" placeholder="Detalhes, link da sala…"></textarea>
+                </div>
+                <div class="field fieldSpan formActions">
+                  <button type="submit" class="btn btnPrimary">Adicionar à lista</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="listSection" aria-labelledby="list-heading">
+              <div class="listToolbar">
+                <h2 id="list-heading" class="cardTitle listHeading">Lista</h2>
+                <div class="filterChips" role="tablist" aria-label="Filtrar por tipo">
+                  <button type="button" class="filterChip filterChipActive" data-filter="todos">Todos</button>
+                  <button type="button" class="filterChip" data-filter="lição">Lições</button>
+                  <button type="button" class="filterChip" data-filter="trabalho">Trabalhos</button>
+                </div>
+              </div>
+              <div id="list-empty" class="emptyState" hidden>
+                <p>Nada aqui ainda.</p>
+                <p class="muted small">Use o formulário acima para adicionar.</p>
+              </div>
+              <ul id="item-list" class="itemList"></ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-config-missing" class="screen heroShell" hidden>
+        <div class="heroBackdrop" aria-hidden="true"></div>
+        <div class="heroContent">
+          <article class="heroCard heroCard--auth">
+            <div class="card authCard authCard--solo">
+              <h1 class="authTitle">Configuração</h1>
+              <p class="authLead">
+                Copie <code>config.example.js</code> para <code>config.js</code> na mesma pasta e preencha a URL e a chave
+                anon do Supabase.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
     </div>
 
-    <script src="./script.js" defer></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
-

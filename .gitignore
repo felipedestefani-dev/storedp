@@ -14,6 +14,9 @@ dist-ssr
 out
 *.local
 
+# Supabase (site estático)
+config.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
