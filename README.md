@@ -6,12 +6,11 @@ Não usa Node nem Next.js: abra com o **Live Server** (ou qualquer servidor est�
 
 ## Configurar
 
-O projeto usa **`config.js`** com a URL do projeto e a chave **anon** do Supabase. A chave anon **não é segredo** no front-end (o Supabase foi feito para isso; o que protege os dados é o **RLS** no banco). Ela aparece no navegador de qualquer forma — por isso o `config.js` **pode** ir no Git e no deploy estático.
+A URL e a chave **anon** ficam no **início de `app.js`** (e repetidas em **`auth-callback.html`** para o link de confirmação de e-mail). A anon **não é segredo** no navegador; o que protege os dados é o **RLS** no Supabase.
 
-1. Se for clonar o repositório do zero: copie `config.example.js` para `config.js` e preencha URL + anon em **Project Settings → API**.
-2. **Publicar no GitHub Pages / hospedagem estática**: o `config.js` precisa estar no repositório (ou gerado no build), senão o site mostra a tela “Configuração”.
+Ao trocar projeto ou chave: edite **os dois arquivos** com os mesmos valores. Veja `config.example.js` só como referência de formato.
 
-**Nunca** coloque a chave **service_role** no repositório nem em JS público.
+**Nunca** coloque a chave **service_role** no repositório.
 
 ## Banco de dados
 
@@ -41,11 +40,11 @@ Se aparecer só pastas, confira se abriu a pasta certa e se existe `index.html` 
 | `index.html` | Página única (landing, login, painel) |
 | `style.css` | Estilos |
 | `app.js` | Lógica e Supabase |
-| `auth-callback.html` | Volta do link de confirmação de e-mail |
-| `config.js` | URL e chave anon (você cria a partir do exemplo) |
+| `auth-callback.html` | Volta do link de confirmação de e-mail (mesma URL/chave anon que em `app.js`) |
+| `config.example.js` | Referência — o app não importa este arquivo |
 
 O `app.js` carrega o cliente Supabase via CDN (`esm.sh`); é preciso **internet** na primeira carga.
 
 ## Deploy estático
 
-Qualquer hospedagem de arquivos estáticos (Netlify, GitHub Pages, Cloudflare Pages) funciona: envie `index.html`, `style.css`, `app.js`, `auth-callback.html` e configure `config.js` nas variáveis do host **ou** gere `config.js` no build. Cadastre a URL de produção em **Redirect URLs** no Supabase.
+Envie `index.html`, `style.css`, `app.js` e `auth-callback.html`. Cadastre a URL de produção em **Redirect URLs** no Supabase.
