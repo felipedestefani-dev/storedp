@@ -26,6 +26,19 @@ function setAuthBanner(msg, isError) {
   el.hidden = false
 }
 
+/** Supabase devolve mensagens em inglês; o limite de tentativas é no servidor (não dá para “tirar” no site). */
+function formatAuthError(raw) {
+  if (!raw) return 'Algo deu errado. Tente de novo.'
+  const s = String(raw)
+  if (/security purposes|only request this after|rate limit|too many requests|429/i.test(s)) {
+    return 'Muitas tentativas seguidas. Aguarde cerca de 1 minuto e tente de novo. (Limite do Supabase para evitar abuso — em testes, espere ou ajuste em Authentication → Rate Limits no painel.)'
+  }
+  if (/invalid login credentials|invalid email or password/i.test(s)) {
+    return 'E-mail ou senha incorretos.'
+  }
+  return s
+}
+
 function setBoardError(msg) {
   const el = document.getElementById('board-error')
   if (!msg) {
@@ -216,34 +229,47 @@ async function main() {
   tabLogin.addEventListener('click', () => setMode('login'))
   tabRegister.addEventListener('click', () => setMode('register'))
 
+  let authSubmitting = false
   document.getElementById('form-auth').addEventListener('submit', async (e) => {
     e.preventDefault()
+    if (authSubmitting) return
+    authSubmitting = true
+    btnSubmit.disabled = true
+    const prevLabel = btnSubmit.textContent
+    btnSubmit.textContent = 'Aguarde…'
     setAuthBanner('', true)
-    const email = document.getElementById('email').value.trim()
-    const password = document.getElementById('password').value
-    const redirectTo = new URL('auth-callback.html', window.location.href).href
 
-    if (mode === 'register') {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: redirectTo },
-      })
-      if (error) {
-        setAuthBanner(error.message, true)
+    try {
+      const email = document.getElementById('email').value.trim()
+      const password = document.getElementById('password').value
+      const redirectTo = new URL('auth-callback.html', window.location.href).href
+
+      if (mode === 'register') {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: redirectTo },
+        })
+        if (error) {
+          setAuthBanner(formatAuthError(error.message), true)
+          return
+        }
+        setAuthBanner(
+          'Se a confirmação de e-mail estiver ativa no Supabase, verifique sua caixa de entrada.',
+          false
+        )
         return
       }
-      setAuthBanner(
-        'Se a confirmação de e-mail estiver ativa no Supabase, verifique sua caixa de entrada.',
-        false
-      )
-      return
-    }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      setAuthBanner(error.message, true)
-      return
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setAuthBanner(formatAuthError(error.message), true)
+        return
+      }
+    } finally {
+      authSubmitting = false
+      btnSubmit.disabled = false
+      btnSubmit.textContent = prevLabel
     }
   })
 

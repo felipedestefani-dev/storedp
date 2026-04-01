@@ -16,6 +16,13 @@ Ao trocar projeto ou chave: edite **os dois arquivos** com os mesmos valores. Ve
 
 No **SQL Editor** do Supabase, execute [`supabase/migrations/001_assignments.sql`](supabase/migrations/001_assignments.sql) (tabela `assignments` + RLS).
 
+## Limite de tentativas de login
+
+Se aparecer algo como *“For security purposes, you can only request this after…”*, é **rate limit do Supabase** (proteção contra tentativas em massa). Não dá para desligar só no front-end.
+
+- Espere **~1 minuto** e tente de novo (evite clicar várias vezes no botão — o app agora bloqueia envio duplicado).
+- No painel: **Authentication → Rate Limits** — alguns limites podem ser ajustados conforme o plano ([documentação](https://supabase.com/docs/guides/auth/rate-limits)).
+
 ## Autenticação (Supabase)
 
 Em **Authentication → URL Configuration**:
