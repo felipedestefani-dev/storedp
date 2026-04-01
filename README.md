@@ -6,10 +6,12 @@ Não usa Node nem Next.js: abra com o **Live Server** (ou qualquer servidor est�
 
 ## Configurar
 
-1. Copie `config.example.js` para `config.js` na mesma pasta.
-2. No [Supabase](https://supabase.com) → **Project Settings → API**, cole a chave **anon public** em `SUPABASE_ANON_KEY` dentro de `config.js` (a URL de exemplo já está em `config.example.js`).
+O projeto usa **`config.js`** com a URL do projeto e a chave **anon** do Supabase. A chave anon **não é segredo** no front-end (o Supabase foi feito para isso; o que protege os dados é o **RLS** no banco). Ela aparece no navegador de qualquer forma — por isso o `config.js` **pode** ir no Git e no deploy estático.
 
-O arquivo `config.js` está no `.gitignore` e **não deve** ser commitado.
+1. Se for clonar o repositório do zero: copie `config.example.js` para `config.js` e preencha URL + anon em **Project Settings → API**.
+2. **Publicar no GitHub Pages / hospedagem estática**: o `config.js` precisa estar no repositório (ou gerado no build), senão o site mostra a tela “Configuração”.
+
+**Nunca** coloque a chave **service_role** no repositório nem em JS público.
 
 ## Banco de dados
 
