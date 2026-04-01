@@ -15,28 +15,46 @@ function showScreen(id) {
   }
 }
 
-function setAuthBanner(msg, isError) {
+function setAuthBanner(msg, isError, opts = {}) {
+  const showResend = Boolean(opts.showResend)
   const el = document.getElementById('auth-banner')
+  const wrap = document.getElementById('auth-resend-wrap')
   if (!msg) {
     el.hidden = true
+    if (wrap) wrap.hidden = true
     return
   }
   el.textContent = msg
   el.className = `banner ${isError ? 'bannerError' : 'bannerInfo'}`
   el.hidden = false
+  if (wrap) wrap.hidden = !showResend
 }
 
-/** Supabase devolve mensagens em inglês; o limite de tentativas é no servidor (não dá para “tirar” no site). */
-function formatAuthError(raw) {
-  if (!raw) return 'Algo deu errado. Tente de novo.'
+/**
+ * Traduz erros do Supabase. O login falha se o e-mail não foi confirmado (configuração no painel).
+ * @returns {{ message: string, showResend: boolean }}
+ */
+function parseAuthError(raw) {
+  if (!raw) return { message: 'Algo deu errado. Tente de novo.', showResend: false }
   const s = String(raw)
-  if (/security purposes|only request this after|rate limit|too many requests|429/i.test(s)) {
-    return 'Muitas tentativas seguidas. Aguarde cerca de 1 minuto e tente de novo. (Limite do Supabase para evitar abuso — em testes, espere ou ajuste em Authentication → Rate Limits no painel.)'
+  if (/security purposes|only request this after|rate limit|too many requests|429|email rate limit/i.test(s)) {
+    return {
+      message:
+        'Muitas tentativas seguidas. Aguarde cerca de 1 minuto e tente de novo. (Authentication → Rate Limits no Supabase.)',
+      showResend: false,
+    }
   }
   if (/invalid login credentials|invalid email or password/i.test(s)) {
-    return 'E-mail ou senha incorretos.'
+    return { message: 'E-mail ou senha incorretos.', showResend: false }
   }
-  return s
+  if (/email not confirmed|not confirmed|confirm your email|signup_not_completed|Email link is invalid or has expired/i.test(s)) {
+    return {
+      message:
+        'Este e-mail ainda não foi confirmado (por isso o login falha). Veja o spam. Ou use o botão abaixo para reenviar. No Supabase: Authentication → Providers → Email → desative "Confirm email" para entrar sem precisar do e-mail.',
+      showResend: true,
+    }
+  }
+  return { message: s, showResend: false }
 }
 
 function setBoardError(msg) {
@@ -224,10 +242,35 @@ async function main() {
     tabRegister.classList.toggle('authTabActive', m === 'register')
     btnSubmit.textContent = m === 'login' ? 'Entrar' : 'Cadastrar'
     document.getElementById('password').autocomplete = m === 'login' ? 'current-password' : 'new-password'
+    setAuthBanner('', true)
   }
 
   tabLogin.addEventListener('click', () => setMode('login'))
   tabRegister.addEventListener('click', () => setMode('register'))
+
+  document.getElementById('btn-resend-confirm').addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim()
+    const redirectTo = new URL('auth-callback.html', window.location.href).href
+    if (!email) {
+      setAuthBanner('Digite seu e-mail no campo acima.', true)
+      return
+    }
+    const btn = document.getElementById('btn-resend-confirm')
+    btn.disabled = true
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: redirectTo },
+    })
+    btn.disabled = false
+    if (error) {
+      const parsed = parseAuthError(error.message)
+      setAuthBanner(parsed.message, true, { showResend: parsed.showResend })
+      return
+    }
+    setAuthBanner('Enviamos outro e-mail. Confira a caixa de entrada e o spam.', false)
+    document.getElementById('auth-resend-wrap').hidden = true
+  })
 
   let authSubmitting = false
   document.getElementById('form-auth').addEventListener('submit', async (e) => {
@@ -245,17 +288,22 @@ async function main() {
       const redirectTo = new URL('auth-callback.html', window.location.href).href
 
       if (mode === 'register') {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: redirectTo },
         })
         if (error) {
-          setAuthBanner(formatAuthError(error.message), true)
+          const parsed = parseAuthError(error.message)
+          setAuthBanner(parsed.message, true, { showResend: parsed.showResend })
+          return
+        }
+        if (data.session && data.user) {
+          await showDashboard(data.user)
           return
         }
         setAuthBanner(
-          'Se a confirmação de e-mail estiver ativa no Supabase, verifique sua caixa de entrada.',
+          'Conta criada. Abra o link de confirmação no e-mail (confira o spam). Se nada chegar: no Supabase, Authentication → Providers → Email, desative "Confirm email" e cadastre de novo ou confirme o usuário em Authentication → Users.',
           false
         )
         return
@@ -263,7 +311,8 @@ async function main() {
 
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
-        setAuthBanner(formatAuthError(error.message), true)
+        const parsed = parseAuthError(error.message)
+        setAuthBanner(parsed.message, true, { showResend: parsed.showResend })
         return
       }
     } finally {

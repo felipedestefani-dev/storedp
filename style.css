@@ -489,6 +489,12 @@ body {
   color: var(--text);
 }
 
+.authResend {
+  margin: 0 0 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
 .appHeader {
   border-bottom: 1px solid var(--border);
   background: var(--surface);

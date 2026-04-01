@@ -30,6 +30,13 @@ Em **Authentication → URL Configuration**:
 - **Site URL**: a URL base que você usa no Live Server (ex.: `http://127.0.0.1:5500`).
 - **Redirect URLs**: inclua `http://127.0.0.1:5500/auth-callback.html` e `http://localhost:5500/auth-callback.html` (ajuste a porta se o Live Server usar outra).
 
+### E-mail não chega / não consigo entrar
+
+1. **Confirmação obrigatória** — Com **Confirm email** ligado, o Supabase **só deixa entrar** depois que você abre o link do e-mail. Os e-mails do plano gratuito podem ir para **spam** ou atrasar alguns minutos.
+2. **Testar sem e-mail** — **Authentication → Providers → Email** → desative **Confirm email**. Aí o cadastro já entra logado (ou pode logar na hora).
+3. **Confirmar manualmente** — **Authentication → Users** → selecione o usuário → opção de confirmar e-mail, se existir na sua versão do painel.
+4. No site, use **Reenviar e-mail de confirmação** (aparece quando o login falha por e-mail não confirmado).
+
 Para cadastro sem confirmar e-mail em testes: **Authentication → Providers → Email** → desative **Confirm email** (só em desenvolvimento).
 
 ## Como abrir com o Live Server
