@@ -2,17 +2,28 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <!-- GitHub Pages /subpasta: sem isso, ./app.js vira /app.js e o JS não carrega (botões mortos). -->
+    <!-- Pasta do app (GitHub Pages /repo/, Vercel /, etc.) — usada em <base> e ao carregar app.js -->
     <script>
       ;(function () {
-        var path = location.pathname
-        var dir
-        if (!path || path === '/') dir = '/'
-        else if (path.endsWith('/')) dir = path
-        else if (/\.[^./]+$/.test(path.split('/').pop() || '')) dir = path.replace(/[^/]+$/, '')
-        else dir = path + '/'
+        function assetBaseHref() {
+          var u = new URL(location.href)
+          var p = u.pathname
+          if (p === '/' || p === '') {
+            u.pathname = '/'
+            return u.href
+          }
+          if (!p.endsWith('/')) {
+            var seg = p.split('/').pop() || ''
+            if (/\.[^./]+$/.test(seg)) p = p.replace(/[^/]+$/, '')
+            else p = p + '/'
+          }
+          u.pathname = p
+          return u.href
+        }
+        var base = assetBaseHref()
+        window.__FI_ASSET_BASE__ = base
         var b = document.createElement('base')
-        b.href = dir
+        b.href = base
         var m = document.querySelector('meta[charset]')
         document.head.insertBefore(b, m ? m.nextSibling : document.head.firstChild)
       })()
@@ -149,8 +160,28 @@
       </section>
     </div>
 
-    <!-- defer + ordem fixa: UMD do Supabase antes do app (sem type=module para não isolar globals) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
-    <script defer src="./app.js"></script>
+    <!-- Supabase UMD (síncrono); depois app.js com URL absoluta (evita 404 em /storedp no GitHub Pages). -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
+    <script>
+      ;(function () {
+        var base = window.__FI_ASSET_BASE__ || location.href
+        var url = new URL('app.js', base).href
+        var s = document.createElement('script')
+        s.async = false
+        s.src = url
+        s.onerror = function () {
+          var d = document.createElement('div')
+          d.setAttribute('role', 'alert')
+          d.style.cssText =
+            'position:fixed;bottom:0;left:0;right:0;padding:1rem;background:#fce8e6;color:#5c1a16;font-family:system-ui,sans-serif;font-size:0.9rem;z-index:99999'
+          d.innerHTML =
+            '<strong>app.js não carregou.</strong> Verifique o Console (F12) → Network. URL: <code style="word-break:break-all">' +
+            url +
+            '</code>'
+          document.body.appendChild(d)
+        }
+        document.body.appendChild(s)
+      })()
+    </script>
   </body>
 </html>

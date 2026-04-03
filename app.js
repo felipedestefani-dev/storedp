@@ -605,6 +605,9 @@ async function start() {
   attachUIHandlers()
   bindRest()
   console.info('[Felipe Investments] UI ligada.')
+  if (typeof window.__FI_ASSET_BASE__ !== 'undefined') {
+    console.info('[Felipe Investments] asset base:', window.__FI_ASSET_BASE__)
+  }
 
   sb.auth.onAuthStateChange(async (event, sess) => {
     if (event === 'INITIAL_SESSION') return
