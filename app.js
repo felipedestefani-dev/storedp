@@ -30,14 +30,6 @@ function getCreateClient() {
   return null
 }
 
-/** Clique pode ter target = nó de texto; closest() só existe em Element. */
-function eventTargetElement(ev) {
-  const t = ev.target
-  if (t instanceof Element) return t
-  if (t && t.nodeType === Node.TEXT_NODE && t.parentElement) return t.parentElement
-  return null
-}
-
 function showView(which) {
   const map = { auth: 'view-auth', dash: 'view-dash', config: 'view-config' }
   const id = map[which]
@@ -426,12 +418,62 @@ async function doAdd(ev) {
   }
 }
 
-/** Chamado pelo HTML (onclick / onsubmit): não depende de delegação no document. */
-function exposeDashHandlers() {
-  window.__fiLogout = (e) => {
-    if (e) e.preventDefault()
-    if (!sb) return
-    void doLogout()
+/**
+ * Listeners diretos nos elementos (compatível com CSP sem onclick inline).
+ * Um único registro por sessão de página.
+ */
+function attachUIHandlers() {
+  if (window.__fiUIHandlers) return
+  window.__fiUIHandlers = true
+
+  const btnLogout = $('btn-logout')
+  if (btnLogout) {
+    btnLogout.addEventListener('click', (e) => {
+      e.preventDefault()
+      if (!sb) return
+      void doLogout()
+    })
+  }
+
+  const formAdd = $('form-add')
+  if (formAdd) {
+    formAdd.addEventListener('submit', (e) => {
+      e.preventDefault()
+      if (!sb) return
+      doAdd(e).catch((err) => {
+        console.error(err)
+        boardMsg(err instanceof Error ? err.message : String(err), 'err')
+      })
+    })
+  }
+
+  const tl = $('tab-login')
+  const tr = $('tab-register')
+  if (tl) {
+    tl.addEventListener('click', () => {
+      mode = 'login'
+      tl.classList.add('tab--on')
+      tr?.classList.remove('tab--on')
+      const b = $('btn-auth')
+      if (b) b.textContent = 'Entrar'
+      const pw = $('password')
+      if (pw) pw.autocomplete = 'current-password'
+    })
+  }
+  if (tr) {
+    tr.addEventListener('click', () => {
+      mode = 'register'
+      tr.classList.add('tab--on')
+      tl?.classList.remove('tab--on')
+      const b = $('btn-auth')
+      if (b) b.textContent = 'Criar conta'
+      const pw = $('password')
+      if (pw) pw.autocomplete = 'new-password'
+    })
+  }
+
+  window.__fiLogout = () => {
+    if (sb) void doLogout()
   }
   window.__fiAddSubmit = (e) => {
     if (e) e.preventDefault()
@@ -441,38 +483,6 @@ function exposeDashHandlers() {
       boardMsg(err instanceof Error ? err.message : String(err), 'err')
     })
   }
-}
-
-function bindDelegated() {
-  if (window.__fiDelegatedBound) return
-  window.__fiDelegatedBound = true
-  document.addEventListener(
-    'click',
-    (ev) => {
-      const el = eventTargetElement(ev)
-      if (!el) return
-      if (el.id === 'tab-login') {
-        mode = 'login'
-        $('tab-login')?.classList.add('tab--on')
-        $('tab-register')?.classList.remove('tab--on')
-        const b = $('btn-auth')
-        if (b) b.textContent = 'Entrar'
-        const pw = $('password')
-        if (pw) pw.autocomplete = 'current-password'
-        return
-      }
-      if (el.id === 'tab-register') {
-        mode = 'register'
-        $('tab-register')?.classList.add('tab--on')
-        $('tab-login')?.classList.remove('tab--on')
-        const b = $('btn-auth')
-        if (b) b.textContent = 'Criar conta'
-        const pw = $('password')
-        if (pw) pw.autocomplete = 'new-password'
-      }
-    },
-    true
-  )
 }
 
 function bindRest() {
@@ -592,9 +602,8 @@ async function start() {
     return
   }
 
-  exposeDashHandlers()
+  attachUIHandlers()
   bindRest()
-  bindDelegated()
   console.info('[Felipe Investments] UI ligada.')
 
   sb.auth.onAuthStateChange(async (event, sess) => {

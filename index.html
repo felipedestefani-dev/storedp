@@ -2,6 +2,21 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <!-- GitHub Pages /subpasta: sem isso, ./app.js vira /app.js e o JS não carrega (botões mortos). -->
+    <script>
+      ;(function () {
+        var path = location.pathname
+        var dir
+        if (!path || path === '/') dir = '/'
+        else if (path.endsWith('/')) dir = path
+        else if (/\.[^./]+$/.test(path.split('/').pop() || '')) dir = path.replace(/[^/]+$/, '')
+        else dir = path + '/'
+        var b = document.createElement('base')
+        b.href = dir
+        var m = document.querySelector('meta[charset]')
+        document.head.insertBefore(b, m ? m.nextSibling : document.head.firstChild)
+      })()
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Felipe Investments — painel financeiro." />
     <title>Felipe Investments</title>
@@ -48,14 +63,7 @@
         <header class="topbar">
           <div class="topbar__user">
             <span id="user-email" class="muted"></span>
-            <button
-              type="button"
-              class="btn btn--ghost"
-              id="btn-logout"
-              onclick="window.__fiLogout&amp;&amp;window.__fiLogout(event)"
-            >
-              Sair
-            </button>
+            <button type="button" class="btn btn--ghost" id="btn-logout">Sair</button>
           </div>
         </header>
 
@@ -92,12 +100,7 @@
 
           <section class="card">
             <h2 class="h2">Novo lançamento</h2>
-            <form
-              id="form-add"
-              class="form grid-form"
-              novalidate
-              onsubmit="window.__fiAddSubmit&amp;&amp;window.__fiAddSubmit(event); return false;"
-            >
+            <form id="form-add" class="form grid-form" novalidate>
               <label class="field">
                 <span>Tipo</span>
                 <select id="tipo" name="tipo">

@@ -37,11 +37,16 @@ A chave **anon** não é segredo no front; a segurança vem do **RLS** no banco.
 
 Em **Authentication → URL Configuration**:
 
-- **Site URL**: a URL base que você usa (ex.: `http://127.0.0.1:5500` com Live Server).
-- **Redirect URLs**: inclua  
-  `http://127.0.0.1:5500/auth-callback.html`  
-  `http://localhost:5500/auth-callback.html`  
-  e a URL do site em produção, se houver.
+- **Site URL**: a URL “principal” do app (a mesma base onde está o `index.html`).
+  - Local: `http://127.0.0.1:5500` (Live Server) ou equivalente.
+  - **GitHub Pages** (projeto em subpasta): `https://SEU-USUARIO.github.io/NOME-DO-REPO/` — ex.: `https://felipedestefani-dev.github.io/storedp/`
+- **Redirect URLs** (adicione **todas** as que for usar; uma por linha ou wildcard permitido pelo Supabase):
+  - `http://127.0.0.1:5500/auth-callback.html`
+  - `http://localhost:5500/auth-callback.html`
+  - Em produção: `https://SEU-USUARIO.github.io/NOME-DO-REPO/auth-callback.html`  
+    (ex.: `https://felipedestefani-dev.github.io/storedp/auth-callback.html`)
+
+O `app.js` monta o link do callback com `new URL('auth-callback.html', location.href)`, então em GitHub Pages o caminho `/storedp/` já fica correto, desde que você abra o site por essa URL base.
 
 ## Arquivos principais
 
@@ -52,4 +57,16 @@ Em **Authentication → URL Configuration**:
 | `app.js` | Supabase + lógica |
 | `auth-callback.html` | Retorno do e-mail de confirmação (mesma URL/chave que `app.js`) |
 
-O `app.js` carrega o cliente Supabase via `esm.sh`; é preciso **internet** na primeira carga.
+O `index.html` carrega o Supabase via CDN (jsdelivr); é preciso **internet** na primeira carga.
+
+O `index.html` inclui um `<base>` definido por script para **GitHub Pages em subpasta** (`/storedp/`): sem isso, o navegador pode pedir `app.js` na raiz do domínio (`/app.js`) em vez de `/storedp/app.js`, o JS não carrega e **nenhum botão funciona**.
+
+## Deploy (Netlify, Vercel, GitHub Pages, etc.)
+
+É um **site estático** na **raiz** do repositório: não há bundler. O `package.json` existe só para o comando `npm run build` passar no CI (ele só confirma que `index.html`, `app.js`, etc. existem).
+
+- **Netlify:** use o `netlify.toml` (publica `.` após `npm run build`).
+- **Vercel:** Framework **Other**, ou deixe o `vercel.json` com `buildCommand` como está; **Root Directory** = repositório; não use uma pasta `dist` antiga de outro projeto como saída.
+- **Publicar pasta errada:** se o painel apontar só para `dist/`, vai subir o app antigo (`storedp` / React). O site atual é **`index.html` na raiz**.
+
+Configure **Site URL** e **Redirect URLs** no Supabase para a URL real do deploy (incluindo subpasta no GitHub Pages, se for o caso).

@@ -1,0 +1,8 @@
+{
+  "name": "felipe-investments",
+  "private": true,
+  "description": "Site estático — não há bundle; o build só confirma arquivos.",
+  "scripts": {
+    "build": "node scripts/verify-static.js"
+  }
+}

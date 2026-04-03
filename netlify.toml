@@ -1,0 +1,8 @@
+# Site estático na raiz do repositório (sem framework).
+[build]
+  command = "npm run build"
+  publish = "."
+
+# Evita que o Netlify ignore arquivos necessários (ajuste se usar branch de preview).
+[build.environment]
+  NODE_VERSION = "20"
