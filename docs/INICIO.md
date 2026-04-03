@@ -1,6 +1,7 @@
 # Início rápido
 
-1. Abra `index.html` no navegador (Live Server recomendado).
-2. As tarefas ficam salvas automaticamente neste navegador (`localStorage`).
+Guia completo com **onde pegar URL, anon key**, SQL e URLs de login:
 
-Não é necessário configurar API nem banco de dados.
+**[tutorial-supabase.md](./tutorial-supabase.md)**
+
+Resumo: cole URL + anon em `app.js` e `auth-callback.html`, rode `supabase/migrations/002_finance_entries.sql`, configure Redirect URLs no Supabase, abra `index.html`.

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirmando login — Felipe Investments</title>
+  </head>
+  <body>
+    <p>Confirmando… você será redirecionado.</p>
+    <!-- Script síncrono do UMD primeiro; depois IIFE async (evita type=module isolando globals). -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
+    <script>
+      ;(function () {
+        function getCreateClient() {
+          var s = window.supabase
+          if (!s) return null
+          if (typeof s.createClient === 'function') return s.createClient
+          if (s.default && typeof s.default.createClient === 'function') return s.default.createClient
+          return null
+        }
+        async function main() {
+          var createClient = getCreateClient()
+          if (typeof createClient !== 'function') {
+            document.body.innerHTML =
+              '<p>Erro: biblioteca Supabase não carregou. Verifique rede ou bloqueadores e tente de novo.</p>'
+            return
+          }
+          var SUPABASE_URL = 'https://bxllfimygtmbzvrimfri.supabase.co'
+          var SUPABASE_ANON_KEY =
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4bGxmaW15Z3RtYnp2cmltZnJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMjEzNjAsImV4cCI6MjA5MDc5NzM2MH0.FVB95KzUIIVEUtyUrQl5vdahjSm8ozeMYlC1Aci7wvA'
+          var AUTH_STORAGE_KEY = 'felipe-investments-auth-v1'
+          var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { storageKey: AUTH_STORAGE_KEY, persistSession: true, detectSessionInUrl: true },
+          })
+          var hash = window.location.hash
+          var params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash)
+          var access = params.get('access_token')
+          var refresh = params.get('refresh_token')
+          var code = new URLSearchParams(window.location.search).get('code')
+          try {
+            if (code) {
+              await supabase.auth.exchangeCodeForSession(code)
+            } else if (access && refresh) {
+              await supabase.auth.setSession({ access_token: access, refresh_token: refresh })
+            }
+          } catch (e) {
+            console.error(e)
+          }
+          window.location.replace(new URL('index.html', window.location.href).href)
+        }
+        main().catch(function (e) {
+          console.error(e)
+          document.body.innerHTML = '<p>Erro ao confirmar login. Volte ao site e tente de novo.</p>'
+        })
+      })()
+    </script>
+  </body>
+</html>

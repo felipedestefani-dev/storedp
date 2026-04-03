@@ -3,97 +3,150 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Organizador de tarefas — lições, trabalhos e prazos num só lugar." />
-    <title>Organizador de tarefas</title>
+    <meta name="description" content="Felipe Investments — painel financeiro." />
+    <title>Felipe Investments</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <svg xmlns="http://www.w3.org/2000/svg" class="svgSprite" aria-hidden="true">
-      <symbol id="logo-organizador" viewBox="0 0 64 64">
-        <rect width="64" height="64" rx="16" fill="currentColor" />
-        <rect x="14" y="17" width="26" height="4" rx="2" fill="#ffffff" />
-        <rect x="14" y="28" width="18" height="4" rx="2" fill="#ffffff" opacity="0.92" />
-        <rect x="14" y="39" width="22" height="4" rx="2" fill="#ffffff" opacity="0.92" />
-        <path
-          fill="none"
-          stroke="#ffffff"
-          stroke-width="3.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M38 42l5 5 12-14"
-        />
-      </symbol>
-    </svg>
-
     <div id="app">
-      <header class="appHeader">
-        <div class="appHeaderInner">
-          <div class="appHeaderBrand">
-            <span class="brandMark brandMark--toolbar" aria-hidden="true">
-              <svg class="brandMarkSvg" width="32" height="32" focusable="false">
-                <use href="#logo-organizador" />
-              </svg>
-            </span>
-            <span class="appLogo">Organizador de tarefas</span>
-          </div>
-          <p class="appHint">Salvo neste navegador</p>
+      <section id="view-config" class="view view--center" hidden>
+        <div class="card card--narrow">
+          <h1>Configurar Supabase</h1>
+          <p class="muted">Defina <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code> em <code>app.js</code>.</p>
         </div>
-      </header>
-      <div class="appMain">
-        <div class="board">
-          <div class="boardIntro">
-            <h1 class="boardTitle">Seu painel</h1>
-            <p class="boardSub" id="board-stats"></p>
-          </div>
-          <div id="board-error" class="banner bannerError" role="alert" hidden></div>
+      </section>
 
-          <section class="card formCard" aria-labelledby="add-heading">
-            <h2 id="add-heading" class="cardTitle">Adicionar</h2>
-            <form id="form-add" class="formGrid">
-              <div class="field">
-                <label for="titulo">Título</label>
-                <input id="titulo" name="titulo" placeholder="Ex.: Redação de história" required autocomplete="off" />
-              </div>
-              <div class="field">
-                <label for="tipo">Tipo</label>
+      <section id="view-auth" class="view view--center">
+        <div class="card card--narrow">
+          <header class="brand">
+            <h1>Felipe Investments</h1>
+            <p class="muted">Entre ou crie uma conta.</p>
+          </header>
+          <div id="auth-banner" class="banner banner--err" role="alert" hidden></div>
+          <p id="auth-resend" class="resend" hidden>
+            <button type="button" class="link" id="btn-resend">Reenviar e-mail de confirmação</button>
+          </p>
+          <div class="tabs" role="tablist">
+            <button type="button" class="tab tab--on" id="tab-login" role="tab">Entrar</button>
+            <button type="button" class="tab" id="tab-register" role="tab">Criar conta</button>
+          </div>
+          <form id="form-auth" class="stack" novalidate>
+            <label class="field">
+              <span>E-mail</span>
+              <input id="email" type="email" autocomplete="email" required placeholder="seu@email.com" />
+            </label>
+            <label class="field">
+              <span>Senha</span>
+              <input id="password" type="password" required minlength="6" placeholder="Mínimo 6 caracteres" />
+            </label>
+            <button type="submit" class="btn btn--primary" id="btn-auth">Entrar</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="view-dash" class="view view--dash" hidden>
+        <header class="topbar">
+          <div class="topbar__brand">
+            <strong>Felipe Investments</strong>
+            <span class="muted small">Painel financeiro</span>
+          </div>
+          <div class="topbar__user">
+            <span id="user-email" class="muted"></span>
+            <button
+              type="button"
+              class="btn btn--ghost"
+              id="btn-logout"
+              onclick="window.__fiLogout&amp;&amp;window.__fiLogout(event)"
+            >
+              Sair
+            </button>
+          </div>
+        </header>
+
+        <main class="main">
+          <div id="board-msg" class="banner" role="status" hidden></div>
+
+          <section class="grid grid--summary" aria-label="Resumo">
+            <article class="tile tile--gain">
+              <h2>Ganhos (realizados)</h2>
+              <p class="tile__val" id="sum-ganhos">R$&nbsp;0,00</p>
+            </article>
+            <article class="tile tile--future">
+              <h2>Ganhos futuros</h2>
+              <p class="tile__val" id="sum-ganhos-futuros">R$&nbsp;0,00</p>
+            </article>
+            <article class="tile tile--loss">
+              <h2>Despesas</h2>
+              <p class="tile__val" id="sum-despesas">R$&nbsp;0,00</p>
+            </article>
+            <article class="tile tile--profit">
+              <h2>Lucro líquido</h2>
+              <p class="tile__val" id="sum-lucro">R$&nbsp;0,00</p>
+            </article>
+            <article class="tile tile--inv">
+              <h2>Investido (líquido)</h2>
+              <p class="tile__val" id="sum-invest">R$&nbsp;0,00</p>
+            </article>
+          </section>
+
+          <section class="card">
+            <h2 class="h2">Novo lançamento</h2>
+            <form
+              id="form-add"
+              class="form grid-form"
+              novalidate
+              onsubmit="window.__fiAddSubmit&amp;&amp;window.__fiAddSubmit(event); return false;"
+            >
+              <label class="field">
+                <span>Tipo</span>
                 <select id="tipo" name="tipo">
-                  <option value="lição">Lição</option>
-                  <option value="trabalho" selected>Trabalho</option>
+                  <option value="ganho">Ganho / receita</option>
+                  <option value="ganho_futuro">Ganho futuro</option>
+                  <option value="despesa" selected>Despesa</option>
+                  <option value="aporte">Aporte</option>
+                  <option value="resgate">Resgate</option>
                 </select>
-              </div>
-              <div class="field">
-                <label for="entrega">Entrega (opcional)</label>
-                <input id="entrega" name="entrega" type="date" />
-              </div>
-              <div class="field fieldSpan">
-                <label for="obs">Observações</label>
-                <textarea id="obs" name="obs" rows="2" placeholder="Detalhes, link da sala…"></textarea>
-              </div>
-              <div class="field fieldSpan formActions">
-                <button type="submit" class="btn btnPrimary">Adicionar à lista</button>
+              </label>
+              <label class="field">
+                <span>Valor (R$)</span>
+                <input id="valor" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" />
+              </label>
+              <label class="field field--full">
+                <span>Descrição</span>
+                <input id="desc" type="text" placeholder="Ex.: Salário, aluguel…" autocomplete="off" />
+              </label>
+              <label class="field field--full">
+                <span id="data-label">Data ou prazo</span>
+                <input id="data" type="text" maxlength="120" placeholder="2026-04-15 ou até 15/04" autocomplete="off" />
+              </label>
+              <div class="field field--full form-actions">
+                <button type="submit" class="btn btn--primary" id="btn-add">Adicionar lançamento</button>
               </div>
             </form>
           </section>
 
-          <section class="listSection" aria-labelledby="list-heading">
-            <div class="listToolbar">
-              <h2 id="list-heading" class="cardTitle listHeading">Lista</h2>
-              <div class="filterChips" role="tablist" aria-label="Filtrar por tipo">
-                <button type="button" class="filterChip filterChipActive" data-filter="todos">Todos</button>
-                <button type="button" class="filterChip" data-filter="lição">Lições</button>
-                <button type="button" class="filterChip" data-filter="trabalho">Trabalhos</button>
+          <section class="card">
+            <div class="list-head">
+              <h2 class="h2">Movimentações</h2>
+              <div class="chips" role="tablist">
+                <button type="button" class="chip chip--on" data-filter="todos">Todos</button>
+                <button type="button" class="chip" data-filter="ganho">Ganhos</button>
+                <button type="button" class="chip" data-filter="ganho_futuro">Futuros</button>
+                <button type="button" class="chip" data-filter="despesa">Despesas</button>
+                <button type="button" class="chip" data-filter="investimento">Invest.</button>
               </div>
             </div>
-            <div id="list-empty" class="emptyState" hidden>
-              <p>Nada aqui ainda.</p>
-              <p class="muted small">Use o formulário acima para adicionar.</p>
+            <div id="list-empty" class="empty" hidden>
+              <p>Nenhum lançamento ainda.</p>
             </div>
-            <ul id="item-list" class="itemList"></ul>
+            <ul id="item-list" class="list"></ul>
           </section>
-        </div>
-      </div>
+        </main>
+      </section>
     </div>
 
-    <script type="module" src="./app.js"></script>
+    <!-- defer + ordem fixa: UMD do Supabase antes do app (sem type=module para não isolar globals) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
+    <script defer src="./app.js"></script>
   </body>
 </html>
