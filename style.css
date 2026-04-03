@@ -11,7 +11,12 @@
   --gold: #c9a227;
   --gain: #0f6b4e;
   --loss: #b42318;
-  --future: #c2410c;
+  --future: #ea580c;
+  --gain-gradient: linear-gradient(145deg, #6ee7b7 0%, #34d399 42%, #0f766e 100%);
+  --future-gradient: linear-gradient(145deg, #fdba74 0%, #fb923c 38%, #f97316 72%, #ea580c 100%);
+  --loss-gradient: linear-gradient(145deg, #fca5a5 0%, #f87171 45%, #dc2626 100%);
+  --profit-gradient: linear-gradient(145deg, #93c5fd 0%, #3b82f6 50%, #1e3a8a 100%);
+  --inv-gradient: linear-gradient(145deg, #c4b5fd 0%, #8b5cf6 55%, #5b21b6 100%);
   --inv: #5b4b8a;
   --profit: #1a3a5c;
   --radius: 10px;
@@ -225,7 +230,7 @@ code {
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1rem;
   padding: 0.75rem 1rem;
   background: var(--surface);
@@ -233,15 +238,26 @@ code {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
 }
 
-.topbar__brand {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+.dash-hero {
+  text-align: center;
+  margin-bottom: 1.35rem;
+  padding: 0 0.25rem;
 }
 
-.topbar__brand strong {
-  font-size: 1.05rem;
-  letter-spacing: -0.02em;
+.dash-hero__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.dash-hero__subtitle {
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
 }
 
 .topbar__user {
@@ -299,24 +315,59 @@ code {
   font-variant-numeric: tabular-nums;
 }
 
-.tile--gain .tile__val {
-  color: var(--gain);
-}
-.tile--future .tile__val {
-  color: var(--future);
-}
-.tile--loss .tile__val {
-  color: var(--loss);
-}
-.tile--profit .tile__val {
-  color: var(--profit);
-}
-.tile--inv .tile__val {
-  color: var(--inv);
+/* Degradê no card inteiro (quadrado branco vira painel colorido) */
+.tile--gain,
+.tile--future,
+.tile--loss,
+.tile--profit,
+.tile--inv {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  overflow: hidden;
 }
 
-.tile--profit .tile__val.neg {
-  color: var(--loss);
+.tile--gain {
+  background: var(--gain-gradient);
+}
+.tile--future {
+  background: var(--future-gradient);
+}
+.tile--loss {
+  background: var(--loss-gradient);
+}
+.tile--profit {
+  background: var(--profit-gradient);
+}
+.tile--inv {
+  background: var(--inv-gradient);
+}
+
+.tile--profit:has(.tile__val.neg) {
+  background: var(--loss-gradient);
+}
+
+.tile--gain h2,
+.tile--future h2,
+.tile--loss h2,
+.tile--profit h2,
+.tile--inv h2 {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+}
+
+.tile--gain .tile__val,
+.tile--future .tile__val,
+.tile--loss .tile__val,
+.tile--profit .tile__val,
+.tile--inv .tile__val {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 0.15rem;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
 }
 
 .grid-form {
@@ -426,8 +477,8 @@ code {
   color: var(--gain);
 }
 .badge--ganho_futuro {
-  background: #ffedd5;
-  color: var(--future);
+  background: linear-gradient(135deg, #ffedd5, #fed7aa);
+  color: #c2410c;
 }
 .badge--despesa {
   background: #fce8e6;
