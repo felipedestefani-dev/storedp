@@ -3,9 +3,9 @@
  * Credenciais: mesmas de antes (auth-callback.html + AUTH_STORAGE_KEY).
  */
 
-const SUPABASE_URL = 'https://bxllfimygtmbzvrimfri.supabase.co'
+const SUPABASE_URL = 'https://viawfdrmaolalvmadaob.supabase.co'
 const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4bGxmaW15Z3RtYnp2cmltZnJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMjEzNjAsImV4cCI6MjA5MDc5NzM2MH0.FVB95KzUIIVEUtyUrQl5vdahjSm8ozeMYlC1Aci7wvA'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpYXdmZHJtYW9sYWx2bWFkYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNTkzMjAsImV4cCI6MjA5MDgzNTMyMH0.sko86wOnNoBAhqmP0gwC8PO9yH8SMML7NZHZWbsNkxQ'
 const AUTH_STORAGE_KEY = 'felipe-investments-auth-v1'
 
 /** @typedef {'ganho'|'ganho_futuro'|'despesa'|'aporte'|'resgate'} Tx */
@@ -290,15 +290,8 @@ function parseValor(s) {
 function syncLabel() {
   const tipo = $('tipo')
   const lab = $('data-label')
-  const inp = $('data')
-  if (!tipo || !lab || !inp) return
-  if (tipo.value === 'ganho_futuro') {
-    lab.textContent = 'Prazo / data'
-    inp.placeholder = 'até 15/04 ou 2026-04-15'
-  } else {
-    lab.textContent = 'Data ou prazo'
-    inp.placeholder = '2026-04-15 ou 15/04/2026'
-  }
+  if (!tipo || !lab) return
+  lab.textContent = tipo.value === 'ganho_futuro' ? 'Prazo / data' : 'Data'
 }
 
 function filterTodos() {
@@ -374,16 +367,11 @@ async function doAdd(ev) {
       boardMsg('Informe a descrição.', 'err')
       return
     }
-    const raw = $('data').value.trim()
-    if (!raw) {
-      boardMsg('Informe data ou prazo.', 'err')
+    const entry_date = $('data').value
+    if (!entry_date) {
+      boardMsg('Selecione uma data.', 'err')
       return
     }
-    if (raw.length > 120) {
-      boardMsg('No máximo 120 caracteres no campo data.', 'err')
-      return
-    }
-    const entry_date = entryDateForInsert(raw)
     if (btn) btn.disabled = true
     const { error } = await sb.from('finance_entries').insert({
       user_id: session.user.id,
@@ -393,11 +381,7 @@ async function doAdd(ev) {
       entry_date,
     })
     if (error) {
-      let m = error.message || 'Erro ao salvar.'
-      if (/date|invalid input|syntax/i.test(m))
-        m +=
-          ' Texto livre exige migration 003 (entry_date como text) ou use data reconhecível (ex.: 15/04/2026).'
-      boardMsg(m, 'err')
+      boardMsg(error.message || 'Erro ao salvar.', 'err')
       return
     }
     $('valor').value = ''
@@ -426,63 +410,80 @@ function attachUIHandlers() {
   if (window.__fiUIHandlers) return
   window.__fiUIHandlers = true
 
-  const btnLogout = $('btn-logout')
+  var found = []
+
+  var btnLogout = $('btn-logout')
   if (btnLogout) {
-    btnLogout.addEventListener('click', (e) => {
+    found.push('btn-logout')
+    btnLogout.addEventListener('click', function (e) {
       e.preventDefault()
-      if (!sb) return
+      console.info('[FI] clique: Sair')
+      if (!sb) { console.warn('[FI] sb nulo'); return }
       void doLogout()
     })
   }
 
-  const formAdd = $('form-add')
-  if (formAdd) {
-    formAdd.addEventListener('submit', (e) => {
-      e.preventDefault()
-      if (!sb) return
-      doAdd(e).catch((err) => {
-        console.error(err)
-        boardMsg(err instanceof Error ? err.message : String(err), 'err')
-      })
-    })
-  }
+  var formAdd = $('form-add')
+  var btnAdd = $('btn-add')
 
-  const tl = $('tab-login')
-  const tr = $('tab-register')
-  if (tl) {
-    tl.addEventListener('click', () => {
-      mode = 'login'
-      tl.classList.add('tab--on')
-      tr?.classList.remove('tab--on')
-      const b = $('btn-auth')
-      if (b) b.textContent = 'Entrar'
-      const pw = $('password')
-      if (pw) pw.autocomplete = 'current-password'
-    })
-  }
-  if (tr) {
-    tr.addEventListener('click', () => {
-      mode = 'register'
-      tr.classList.add('tab--on')
-      tl?.classList.remove('tab--on')
-      const b = $('btn-auth')
-      if (b) b.textContent = 'Criar conta'
-      const pw = $('password')
-      if (pw) pw.autocomplete = 'new-password'
-    })
-  }
-
-  window.__fiLogout = () => {
-    if (sb) void doLogout()
-  }
-  window.__fiAddSubmit = (e) => {
-    if (e) e.preventDefault()
-    if (!sb) return
-    doAdd(e).catch((err) => {
+  function handleAdd(e) {
+    if (e && e.preventDefault) e.preventDefault()
+    console.info('[FI] submit: Adicionar lançamento')
+    if (!sb) { console.warn('[FI] sb nulo'); return }
+    doAdd(e).catch(function (err) {
       console.error(err)
       boardMsg(err instanceof Error ? err.message : String(err), 'err')
     })
   }
+
+  if (formAdd) {
+    found.push('form-add')
+    formAdd.addEventListener('submit', handleAdd)
+  }
+  if (btnAdd) {
+    found.push('btn-add')
+    btnAdd.addEventListener('click', function (e) {
+      if (formAdd) {
+        var ev = new Event('submit', { bubbles: true, cancelable: true })
+        if (!formAdd.dispatchEvent(ev)) return
+      }
+      handleAdd(e)
+    })
+  }
+
+  var tl = $('tab-login')
+  var tr = $('tab-register')
+  if (tl) {
+    found.push('tab-login')
+    tl.addEventListener('click', function () {
+      mode = 'login'
+      tl.classList.add('tab--on')
+      if (tr) tr.classList.remove('tab--on')
+      var b = $('btn-auth')
+      if (b) b.textContent = 'Entrar'
+      var pw = $('password')
+      if (pw) pw.autocomplete = 'current-password'
+    })
+  }
+  if (tr) {
+    found.push('tab-register')
+    tr.addEventListener('click', function () {
+      mode = 'register'
+      tr.classList.add('tab--on')
+      if (tl) tl.classList.remove('tab--on')
+      var b = $('btn-auth')
+      if (b) b.textContent = 'Criar conta'
+      var pw = $('password')
+      if (pw) pw.autocomplete = 'new-password'
+    })
+  }
+
+  console.info('[FI] handlers ligados em:', found.join(', ') || '(nenhum elemento encontrado!)')
+
+  window.__fiLogout = function () {
+    if (sb) void doLogout()
+  }
+  window.__fiAddSubmit = handleAdd
 }
 
 function bindRest() {

@@ -12,11 +12,11 @@
   --gain: #0f6b4e;
   --loss: #b42318;
   --future: #ea580c;
-  --gain-gradient: linear-gradient(145deg, #6ee7b7 0%, #34d399 42%, #0f766e 100%);
-  --future-gradient: linear-gradient(145deg, #fdba74 0%, #fb923c 38%, #f97316 72%, #ea580c 100%);
-  --loss-gradient: linear-gradient(145deg, #fca5a5 0%, #f87171 45%, #dc2626 100%);
-  --profit-gradient: linear-gradient(145deg, #93c5fd 0%, #3b82f6 50%, #1e3a8a 100%);
-  --inv-gradient: linear-gradient(145deg, #c4b5fd 0%, #8b5cf6 55%, #5b21b6 100%);
+  --gain-gradient: linear-gradient(145deg, #6ee7b7 0%, #34d399 50%, #10b981 100%);
+  --future-gradient: linear-gradient(145deg, #fdba74 0%, #fb923c 45%, #f97316 100%);
+  --loss-gradient: linear-gradient(145deg, #fca5a5 0%, #f87171 50%, #ef4444 100%);
+  --profit-gradient: linear-gradient(145deg, #93c5fd 0%, #60a5fa 50%, #3b82f6 100%);
+  --inv-gradient: linear-gradient(145deg, #c4b5fd 0%, #a78bfa 50%, #8b5cf6 100%);
   --inv: #5b4b8a;
   --profit: #1a3a5c;
   --radius: 10px;
