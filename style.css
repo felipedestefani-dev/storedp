@@ -1,4 +1,4 @@
-/* Felipe Investments — folha única */
+/* FD Investimentos — folha única */
 
 :root {
   --bg: #eef1f6;
@@ -234,7 +234,7 @@ code {
   gap: 1rem;
   padding: 0.75rem 1rem;
   background: var(--surface);
-  border-bottom: 3px solid var(--gold);
+  border-bottom: 3px solid var(--accent);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
 }
 
@@ -297,10 +297,16 @@ code {
   border: 1px solid var(--border);
   background: var(--surface);
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 6.5rem;
 }
 
 .tile h2 {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.5rem;
   font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -319,55 +325,118 @@ code {
 .tile--gain,
 .tile--future,
 .tile--loss,
-.tile--profit,
-.tile--inv {
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  box-shadow:
-    var(--shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+.tile--inv,
+.tile--invested,
+.tile--saldo {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   overflow: hidden;
+  position: relative;
 }
 
-.tile--gain {
-  background: var(--gain-gradient);
-}
-.tile--future {
-  background: var(--future-gradient);
-}
-.tile--loss {
-  background: var(--loss-gradient);
-}
-.tile--profit {
-  background: var(--profit-gradient);
-}
-.tile--inv {
-  background: var(--inv-gradient);
+.tile--gain::before,
+.tile--future::before,
+.tile--loss::before,
+.tile--inv::before,
+.tile--invested::before,
+.tile--saldo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 
-.tile--profit:has(.tile__val.neg) {
-  background: var(--loss-gradient);
+.tile--gain::before {
+  background: linear-gradient(90deg, #6ee7b7, #10b981);
+}
+.tile--future::before {
+  background: linear-gradient(90deg, #f97316, #c2410c);
+}
+.tile--loss::before {
+  background: linear-gradient(90deg, #fca5a5, #ef4444);
+}
+.tile--inv::before {
+  background: linear-gradient(90deg, #93c5fd, #3b82f6);
+}
+.tile--invested::before {
+  background: #eab308;
+}
+.tile--saldo::before {
+  background: linear-gradient(90deg, #a3a3a3, #525252);
+}
+
+.tile__header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tile__logo {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  animation: logoZoom 0.5s ease-out;
+}
+
+@keyframes logoZoom {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.tile__header h2 {
+  margin: 0;
 }
 
 .tile--gain h2,
 .tile--future h2,
 .tile--loss h2,
-.tile--profit h2,
-.tile--inv h2 {
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+.tile--inv h2,
+.tile--invested h2,
+.tile--saldo h2 {
+  color: var(--muted);
+  text-shadow: none;
 }
 
 .tile--gain .tile__val,
 .tile--future .tile__val,
 .tile--loss .tile__val,
-.tile--profit .tile__val,
-.tile--inv .tile__val {
+.tile--inv .tile__val,
+.tile--invested .tile__val,
+.tile--saldo .tile__val {
   display: block;
   width: 100%;
   text-align: center;
   margin-top: 0.15rem;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tile--gain .tile__val {
+  background-image: linear-gradient(135deg, #6ee7b7, #10b981);
+}
+.tile--future .tile__val {
+  background-image: linear-gradient(135deg, #f97316, #c2410c);
+}
+.tile--loss .tile__val {
+  background-image: linear-gradient(135deg, #fca5a5, #ef4444);
+}
+.tile--inv .tile__val {
+  background-image: linear-gradient(135deg, #93c5fd, #3b82f6);
+}
+.tile--invested .tile__val {
+  -webkit-text-fill-color: #eab308;
+  color: #eab308;
+  background-image: none;
+}
+.tile--saldo .tile__val {
+  background-image: linear-gradient(135deg, #a3a3a3, #525252);
 }
 
 .grid-form {
@@ -456,7 +525,7 @@ code {
   .row .amt {
     grid-column: 1;
   }
-  .row .del {
+  .row .row-actions {
     grid-column: 2;
     grid-row: 1 / span 2;
     align-self: center;
@@ -518,6 +587,27 @@ code {
   color: var(--inv);
 }
 
+.row-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.edit-btn {
+  padding: 0.35rem 0.55rem;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  border: 1px solid #a4c4e8;
+  background: #f0f6ff;
+  color: #1a4f8a;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.edit-btn:hover {
+  background: #dce8f7;
+}
+
 .del {
   padding: 0.35rem 0.55rem;
   font-size: 0.78rem;
@@ -526,8 +616,29 @@ code {
   background: #fff5f4;
   color: #8a1f1a;
   cursor: pointer;
+  transition: background 0.15s;
 }
 
 .del:hover {
   background: #fce8e6;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  margin-top: 2rem;
+  font-size: 0.82rem;
+  color: var(--text);
+  font-weight: 600;
+  border-top: 1px solid var(--border);
+}
+
+.site-footer a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
 }

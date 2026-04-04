@@ -1,4 +1,4 @@
--- Felipe Investments — lançamentos por usuário (RLS)
+-- FD Investimentos — lançamentos por usuário (RLS)
 -- Rode no Supabase: SQL Editor → New query → Run
 
 create table if not exists public.finance_entries (

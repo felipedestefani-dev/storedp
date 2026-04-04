@@ -1,4 +1,4 @@
-# Tutorial: conectar o Felipe Investments ao Supabase
+# Tutorial: conectar o FD Investimentos ao Supabase
 
 Este guia explica como criar o projeto no Supabase, **onde achar a URL e a chave anon**, colar no site e deixar login e banco funcionando.
 

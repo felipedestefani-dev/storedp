@@ -1,4 +1,4 @@
-/* Felipe Investments */
+/* FD Investimentos */
 
 var SUPABASE_URL = 'https://viawfdrmaolalvmadaob.supabase.co'
 var SUPABASE_ANON_KEY =
@@ -64,19 +64,20 @@ function totals() {
     else if (e.type === 'aporte') ap += e.amount
     else if (e.type === 'resgate') res += e.amount
   }
-  return { ganhos: ganhos, gf: gf, des: des, lucro: ganhos - des, inv: ap - res }
+  var saldo = ganhos - des + res - ap
+  return { ganhos: ganhos, gf: gf, des: des, inv: ap - res, investido: ap, saldo: saldo }
 }
 
 function updateSummary() {
   var t = totals()
-  var g = $('sum-ganhos'), gff = $('sum-ganhos-futuros'), d = $('sum-despesas'), l = $('sum-lucro'), iv = $('sum-invest')
-  if (!g || !gff || !d || !l || !iv) return
+  var g = $('sum-ganhos'), gff = $('sum-ganhos-futuros'), d = $('sum-despesas'), iv = $('sum-invest'), invd = $('sum-investido'), sl = $('sum-saldo')
+  if (!g || !gff || !d || !iv) return
   g.textContent = fmt(t.ganhos)
   gff.textContent = fmt(t.gf)
   d.textContent = fmt(t.des)
-  l.textContent = fmt(t.lucro)
-  l.classList.toggle('neg', t.lucro < 0)
   iv.textContent = fmt(t.inv)
+  if (invd) invd.textContent = fmt(t.investido)
+  if (sl) sl.textContent = fmt(t.saldo)
 }
 
 var typeLabel = { ganho: 'Ganho', ganho_futuro: 'Futuro', despesa: 'Despesa', aporte: 'Aporte', resgate: 'Resgate' }
@@ -134,9 +135,13 @@ function renderList() {
     var m = document.createElement('div'); m.className = 'm'; m.textContent = lineDate(e)
     body.appendChild(t); body.appendChild(m)
     var amt = document.createElement('div'); amt.className = amtClass(e.type); amt.textContent = signed(e)
+    var actions = document.createElement('div'); actions.className = 'row-actions'
+    var edit = document.createElement('button'); edit.type = 'button'; edit.className = 'edit-btn'; edit.textContent = 'Editar'
+    edit.setAttribute('data-id', e.id)
     var del = document.createElement('button'); del.type = 'button'; del.className = 'del'; del.textContent = 'Excluir'
     del.setAttribute('data-id', e.id)
-    li.appendChild(badge); li.appendChild(body); li.appendChild(amt); li.appendChild(del)
+    actions.appendChild(edit); actions.appendChild(del)
+    li.appendChild(badge); li.appendChild(body); li.appendChild(amt); li.appendChild(actions)
     ul.appendChild(li)
   })
 }
@@ -169,6 +174,66 @@ function delRow(id) {
   sb.from('finance_entries').delete().eq('id', id).then(function (res) {
     if (res.error) { boardMsg(res.error.message, 'err'); return }
     loadEntries()
+  })
+}
+
+function editRow(id) {
+  var entry = null
+  for (var i = 0; i < entries.length; i++) {
+    if (entries[i].id === id) { entry = entries[i]; break }
+  }
+  if (!entry) return
+
+  $('tipo').value = entry.type
+  $('valor').value = String(entry.amount).replace('.', ',')
+  $('desc').value = entry.description
+  $('data').value = entry.date || ''
+  var lab = $('data-label')
+  if (lab) lab.textContent = entry.type === 'ganho_futuro' ? 'Prazo / data' : 'Data'
+
+  var btn = $('btn-add')
+  btn.textContent = 'Salvar alteração'
+  btn.setAttribute('data-edit-id', id)
+
+  var form = $('form-add')
+  if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  boardMsg('Editando lançamento. Altere os campos e clique em "Salvar alteração".', 'ok')
+}
+
+function doUpdate(id) {
+  boardMsg('', 'err')
+  var btn = $('btn-add')
+  var tipo = $('tipo').value
+  var raw = $('valor').value.trim()
+  var v = parseFloat(raw.replace(',', '.'))
+  if (!isFinite(v) || v <= 0) { boardMsg('Valor inválido (ex.: 10,50).', 'err'); return Promise.resolve() }
+  var desc = $('desc').value.trim()
+  if (!desc) { boardMsg('Informe a descrição.', 'err'); return Promise.resolve() }
+  var entry_date = $('data').value
+  if (!entry_date) { boardMsg('Selecione uma data.', 'err'); return Promise.resolve() }
+  if (btn) btn.disabled = true
+
+  return sb.from('finance_entries').update({
+    type: tipo,
+    amount: v,
+    description: desc,
+    entry_date: entry_date,
+  }).eq('id', id).then(function (res) {
+    if (res.error) { boardMsg(res.error.message || 'Erro ao atualizar.', 'err'); return }
+    btn.textContent = 'Adicionar lançamento'
+    btn.removeAttribute('data-edit-id')
+    $('valor').value = ''
+    $('desc').value = ''
+    $('data').value = ''
+    $('tipo').value = 'despesa'
+    loadEntries().then(function () {
+      boardMsg('Lançamento atualizado.', 'ok')
+    })
+  }).catch(function (err) {
+    console.error(err)
+    boardMsg(String(err.message || err), 'err')
+  }).finally(function () {
+    if (btn) btn.disabled = false
   })
 }
 
@@ -244,7 +309,12 @@ function wireUI() {
 
   // Add entry
   var formAdd = $('form-add')
-  if (formAdd) formAdd.onsubmit = function (e) { e.preventDefault(); doAdd() }
+  if (formAdd) formAdd.onsubmit = function (e) {
+    e.preventDefault()
+    var editId = $('btn-add').getAttribute('data-edit-id')
+    if (editId) doUpdate(editId)
+    else doAdd()
+  }
 
   // Tabs
   var tl = $('tab-login'), tr = $('tab-register')
@@ -316,9 +386,14 @@ function wireUI() {
   var list = $('item-list')
   if (list) list.onclick = function (e) {
     var btn = e.target
-    if (!btn || !btn.classList.contains('del')) return
-    var id = btn.getAttribute('data-id')
-    if (id) delRow(id)
+    if (!btn) return
+    if (btn.classList.contains('del')) {
+      var id = btn.getAttribute('data-id')
+      if (id) delRow(id)
+    } else if (btn.classList.contains('edit-btn')) {
+      var id = btn.getAttribute('data-id')
+      if (id) editRow(id)
+    }
   }
 
   console.info('[FI] UI pronta.')

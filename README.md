@@ -1,4 +1,4 @@
-# Felipe Investments
+# FD Investimentos
 
 Painel financeiro no navegador (ganhos, ganhos futuros, despesas, lucro, investimentos) com dados no **Supabase** e login por **e-mail e senha**.
 

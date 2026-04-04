@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Felipe Investments — painel financeiro." />
-    <title>Felipe Investments</title>
+    <meta name="description" content="FD Investimentos — painel financeiro." />
+    <title>FD Investimentos</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -19,7 +19,7 @@
       <section id="view-auth" class="view view--center">
         <div class="card card--narrow">
           <header class="brand">
-            <h1>Felipe Investments</h1>
+            <h1>FD Investimentos</h1>
             <p class="muted">Entre ou crie uma conta.</p>
           </header>
           <div id="auth-banner" class="banner banner--err" role="alert" hidden></div>
@@ -56,7 +56,7 @@
           <div id="board-msg" class="banner" role="status" hidden></div>
 
           <header class="dash-hero" aria-label="Painel">
-            <h1 class="dash-hero__title">Felipe Investments</h1>
+            <h1 class="dash-hero__title">FD Investimentos</h1>
             <p class="dash-hero__subtitle">Painel financeiro</p>
           </header>
 
@@ -73,13 +73,20 @@
               <h2>Despesas</h2>
               <p class="tile__val" id="sum-despesas">R$&nbsp;0,00</p>
             </article>
-            <article class="tile tile--profit">
-              <h2>Lucro líquido</h2>
-              <p class="tile__val" id="sum-lucro">R$&nbsp;0,00</p>
-            </article>
             <article class="tile tile--inv">
-              <h2>Investido (líquido)</h2>
+              <h2>Lucro investimentos</h2>
               <p class="tile__val" id="sum-invest">R$&nbsp;0,00</p>
+            </article>
+            <article class="tile tile--invested">
+              <h2>Investido</h2>
+              <p class="tile__val" id="sum-investido">R$&nbsp;0,00</p>
+            </article>
+            <article class="tile tile--saldo">
+              <div class="tile__header">
+                <img class="tile__logo" src="Logo-BB.png" alt="Banco do Brasil" width="28" height="28" />
+                <h2>Saldo em conta</h2>
+              </div>
+              <p class="tile__val" id="sum-saldo">R$&nbsp;0,00</p>
             </article>
           </section>
 
@@ -133,6 +140,10 @@
         </main>
       </section>
     </div>
+
+    <footer class="site-footer">
+      <p>Desenvolvedor do site: Felipe · <a href="https://www.instagram.com/off.destefani" target="_blank" rel="noopener">@off.destefani</a></p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
     <script src="app.js"></script>
