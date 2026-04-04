@@ -558,6 +558,18 @@ code {
   background: #edeaf7;
   color: var(--inv);
 }
+.badge--investido {
+  background: #fef9c3;
+  color: #a16207;
+}
+.badge--lucro_invest {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.badge--saldo_conta {
+  background: #f3f4f6;
+  color: #374151;
+}
 
 .body .t {
   font-weight: 600;
@@ -585,6 +597,15 @@ code {
 }
 .amt--inv {
   color: var(--inv);
+}
+.amt--investido {
+  color: #a16207;
+}
+.amt--lucro-inv {
+  color: #2563eb;
+}
+.amt--saldo-conta {
+  color: #374151;
 }
 
 .row-actions {

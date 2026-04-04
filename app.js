@@ -55,7 +55,7 @@ function todayISO() { return new Date().toISOString().slice(0, 10) }
 function fmt(n) { return brl.format(n) }
 
 function totals() {
-  var ganhos = 0, gf = 0, des = 0, ap = 0, res = 0
+  var ganhos = 0, gf = 0, des = 0, ap = 0, res = 0, inv = 0, li = 0, sc = 0
   for (var i = 0; i < entries.length; i++) {
     var e = entries[i]
     if (e.type === 'ganho') ganhos += e.amount
@@ -63,9 +63,12 @@ function totals() {
     else if (e.type === 'despesa') des += e.amount
     else if (e.type === 'aporte') ap += e.amount
     else if (e.type === 'resgate') res += e.amount
+    else if (e.type === 'investido') inv += e.amount
+    else if (e.type === 'lucro_invest') li += e.amount
+    else if (e.type === 'saldo_conta') sc += e.amount
   }
   var saldo = ganhos - des + res - ap
-  return { ganhos: ganhos, gf: gf, des: des, inv: ap - res, investido: ap, saldo: saldo }
+  return { ganhos: ganhos, gf: gf, des: des, inv: li, investido: inv, saldo: sc }
 }
 
 function updateSummary() {
@@ -80,12 +83,15 @@ function updateSummary() {
   if (sl) sl.textContent = fmt(t.saldo)
 }
 
-var typeLabel = { ganho: 'Ganho', ganho_futuro: 'Futuro', despesa: 'Despesa', aporte: 'Aporte', resgate: 'Resgate' }
+var typeLabel = { ganho: 'Ganho', ganho_futuro: 'Futuro', despesa: 'Despesa', aporte: 'Aporte', resgate: 'Resgate', investido: 'Investido', lucro_invest: 'Lucro Inv.', saldo_conta: 'Saldo Conta' }
 
 function amtClass(t) {
   if (t === 'ganho') return 'amt amt--gain'
   if (t === 'ganho_futuro') return 'amt amt--future'
   if (t === 'despesa') return 'amt amt--loss'
+  if (t === 'investido') return 'amt amt--investido'
+  if (t === 'lucro_invest') return 'amt amt--lucro-inv'
+  if (t === 'saldo_conta') return 'amt amt--saldo-conta'
   return 'amt amt--inv'
 }
 

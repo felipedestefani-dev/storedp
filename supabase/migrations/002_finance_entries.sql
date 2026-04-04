@@ -5,7 +5,7 @@ create table if not exists public.finance_entries (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   type text not null check (
-    type in ('ganho', 'ganho_futuro', 'despesa', 'aporte', 'resgate')
+    type in ('ganho', 'ganho_futuro', 'despesa', 'aporte', 'resgate', 'investido', 'lucro_invest', 'saldo_conta')
   ),
   amount numeric(14, 2) not null check (amount >= 0),
   description text not null default '',
