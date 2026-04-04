@@ -257,6 +257,7 @@ async function loadEntries() {
     .from('finance_entries')
     .select('id, type, amount, description, entry_date, created_at')
     .order('created_at', { ascending: false })
+  console.info('[FI] loadEntries:', error ? 'ERRO: ' + error.message : (data ? data.length + ' registros' : '0 registros'))
   if (error) {
     boardMsg(error.message || 'Erro ao carregar.', 'err')
     entries = []
@@ -611,6 +612,7 @@ async function start() {
   }
 
   sb.auth.onAuthStateChange(async (event, sess) => {
+    console.info('[FI] authStateChange:', event, sess?.user?.email || '(sem user)')
     if (event === 'INITIAL_SESSION') return
     if (event === 'SIGNED_IN' && sess?.user) await openDash(sess.user)
     if (event === 'SIGNED_OUT') {
@@ -620,10 +622,14 @@ async function start() {
   })
 
   showView('auth')
+  var stored = localStorage.getItem(AUTH_STORAGE_KEY)
+  console.info('[FI] localStorage key:', AUTH_STORAGE_KEY, stored ? '(existe, ' + stored.length + ' chars)' : '(VAZIO)')
+
   const {
     data: { session },
     error,
   } = await sb.auth.getSession()
+  console.info('[FI] getSession:', session ? session.user.email : '(sem sessão)', error || '')
   if (error) authBanner(error.message || 'Erro de sessão.', true)
   if (session?.user) await openDash(session.user)
   else openAuth()
