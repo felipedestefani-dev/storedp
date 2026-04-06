@@ -68,8 +68,16 @@ function totals() {
     else if (e.type === 'lucro_invest') li += e.amount
     else if (e.type === 'saldo_conta') sc += e.amount
   }
-  var saldo = ganhos - des + res - ap
-  return { ganhos: ganhos, gf: gf, des: des, df: df, inv: li, investido: inv, saldo: sc }
+  // Saldo em conta: fluxo de caixa (sem ganhos/despesas futuras — são só previsão).
+  // Lucro de investimentos entra na conta; não somamos "saldo_conta" junto com ganhos/despesas (evita duplicar o mesmo valor).
+  var flow = ganhos - des + res - ap + li
+  var onlySaldoConta =
+    entries.length > 0 &&
+    entries.every(function (e) {
+      return e.type === 'saldo_conta'
+    })
+  var saldoEmConta = onlySaldoConta ? sc : flow
+  return { ganhos: ganhos, gf: gf, des: des, df: df, inv: li, investido: inv, saldo: saldoEmConta }
 }
 
 function updateSummary() {

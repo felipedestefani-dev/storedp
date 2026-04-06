@@ -9,11 +9,11 @@
   --accent: #1a3a5c;
   --accent-hover: #142d47;
   --gold: #c9a227;
-  --gain: #0f6b4e;
+  --gain: #00bb77;
   --loss: #b42318;
-  --future: #ea580c;
-  --gain-gradient: linear-gradient(145deg, #6ee7b7 0%, #34d399 50%, #10b981 100%);
-  --future-gradient: linear-gradient(145deg, #fdba74 0%, #fb923c 45%, #f97316 100%);
+  --future: #50c878;
+  --gain-gradient: linear-gradient(145deg, #7ddfc4 0%, #00bb77 50%, #009960 100%);
+  --future-gradient: linear-gradient(145deg, #a8ebc4 0%, #50c878 50%, #3da862 100%);
   --loss-gradient: linear-gradient(145deg, #fca5a5 0%, #f87171 50%, #ef4444 100%);
   --profit-gradient: linear-gradient(145deg, #93c5fd 0%, #60a5fa 50%, #3b82f6 100%);
   --inv-gradient: linear-gradient(145deg, #c4b5fd 0%, #a78bfa 50%, #8b5cf6 100%);
@@ -353,10 +353,10 @@ code {
 }
 
 .tile--gain::before {
-  background: linear-gradient(90deg, #6ee7b7, #10b981);
+  background: linear-gradient(90deg, #5ee0c0, #00bb77);
 }
 .tile--future::before {
-  background: linear-gradient(90deg, #f97316, #c2410c);
+  background: linear-gradient(90deg, #8fdfae, #50c878);
 }
 .tile--loss::before {
   background: linear-gradient(90deg, #fca5a5, #ef4444);
@@ -372,30 +372,6 @@ code {
 }
 .tile--saldo::before {
   background: linear-gradient(90deg, #a3a3a3, #525252);
-}
-
-.tile__header {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.tile__logo {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  animation: logoZoom 0.5s ease-out;
-}
-
-@keyframes logoZoom {
-  from { transform: scale(0); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-.tile__header h2 {
-  margin: 0;
 }
 
 .tile--gain h2,
@@ -426,10 +402,10 @@ code {
 }
 
 .tile--gain .tile__val {
-  background-image: linear-gradient(135deg, #6ee7b7, #10b981);
+  background-image: linear-gradient(135deg, #7ddfc4, #00bb77);
 }
 .tile--future .tile__val {
-  background-image: linear-gradient(135deg, #f97316, #c2410c);
+  background-image: linear-gradient(135deg, #8fdfae, #50c878);
 }
 .tile--loss .tile__val {
   background-image: linear-gradient(135deg, #fca5a5, #ef4444);
@@ -556,8 +532,8 @@ code {
   color: var(--gain);
 }
 .badge--ganho_futuro {
-  background: linear-gradient(135deg, #ffedd5, #fed7aa);
-  color: #c2410c;
+  background: linear-gradient(135deg, #e8f9f0, #c8f0dc);
+  color: #50c878;
 }
 .badge--despesa {
   background: #fce8e6;
