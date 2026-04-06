@@ -325,6 +325,7 @@ code {
 .tile--gain,
 .tile--future,
 .tile--loss,
+.tile--future-loss,
 .tile--inv,
 .tile--invested,
 .tile--saldo {
@@ -338,6 +339,7 @@ code {
 .tile--gain::before,
 .tile--future::before,
 .tile--loss::before,
+.tile--future-loss::before,
 .tile--inv::before,
 .tile--invested::before,
 .tile--saldo::before {
@@ -358,6 +360,9 @@ code {
 }
 .tile--loss::before {
   background: linear-gradient(90deg, #fca5a5, #ef4444);
+}
+.tile--future-loss::before {
+  background: linear-gradient(90deg, #f87171, #991b1b);
 }
 .tile--inv::before {
   background: linear-gradient(90deg, #93c5fd, #3b82f6);
@@ -396,6 +401,7 @@ code {
 .tile--gain h2,
 .tile--future h2,
 .tile--loss h2,
+.tile--future-loss h2,
 .tile--inv h2,
 .tile--invested h2,
 .tile--saldo h2 {
@@ -406,6 +412,7 @@ code {
 .tile--gain .tile__val,
 .tile--future .tile__val,
 .tile--loss .tile__val,
+.tile--future-loss .tile__val,
 .tile--inv .tile__val,
 .tile--invested .tile__val,
 .tile--saldo .tile__val {
@@ -426,6 +433,9 @@ code {
 }
 .tile--loss .tile__val {
   background-image: linear-gradient(135deg, #fca5a5, #ef4444);
+}
+.tile--future-loss .tile__val {
+  background-image: linear-gradient(135deg, #f87171, #991b1b);
 }
 .tile--inv .tile__val {
   background-image: linear-gradient(135deg, #93c5fd, #3b82f6);
@@ -553,6 +563,10 @@ code {
   background: #fce8e6;
   color: var(--loss);
 }
+.badge--despesa_futura {
+  background: #fee2e2;
+  color: #991b1b;
+}
 .badge--aporte,
 .badge--resgate {
   background: #edeaf7;
@@ -594,6 +608,9 @@ code {
 }
 .amt--loss {
   color: var(--loss);
+}
+.amt--future-loss {
+  color: #991b1b;
 }
 .amt--inv {
   color: var(--inv);

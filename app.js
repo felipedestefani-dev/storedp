@@ -55,12 +55,13 @@ function todayISO() { return new Date().toISOString().slice(0, 10) }
 function fmt(n) { return brl.format(n) }
 
 function totals() {
-  var ganhos = 0, gf = 0, des = 0, ap = 0, res = 0, inv = 0, li = 0, sc = 0
+  var ganhos = 0, gf = 0, des = 0, df = 0, ap = 0, res = 0, inv = 0, li = 0, sc = 0
   for (var i = 0; i < entries.length; i++) {
     var e = entries[i]
     if (e.type === 'ganho') ganhos += e.amount
     else if (e.type === 'ganho_futuro' && e.date >= todayISO()) gf += e.amount
     else if (e.type === 'despesa') des += e.amount
+    else if (e.type === 'despesa_futura' && e.date >= todayISO()) df += e.amount
     else if (e.type === 'aporte') ap += e.amount
     else if (e.type === 'resgate') res += e.amount
     else if (e.type === 'investido') inv += e.amount
@@ -68,27 +69,29 @@ function totals() {
     else if (e.type === 'saldo_conta') sc += e.amount
   }
   var saldo = ganhos - des + res - ap
-  return { ganhos: ganhos, gf: gf, des: des, inv: li, investido: inv, saldo: sc }
+  return { ganhos: ganhos, gf: gf, des: des, df: df, inv: li, investido: inv, saldo: sc }
 }
 
 function updateSummary() {
   var t = totals()
-  var g = $('sum-ganhos'), gff = $('sum-ganhos-futuros'), d = $('sum-despesas'), iv = $('sum-invest'), invd = $('sum-investido'), sl = $('sum-saldo')
+  var g = $('sum-ganhos'), gff = $('sum-ganhos-futuros'), d = $('sum-despesas'), dff = $('sum-despesas-futuras'), iv = $('sum-invest'), invd = $('sum-investido'), sl = $('sum-saldo')
   if (!g || !gff || !d || !iv) return
   g.textContent = fmt(t.ganhos)
   gff.textContent = fmt(t.gf)
   d.textContent = fmt(t.des)
+  if (dff) dff.textContent = fmt(t.df)
   iv.textContent = fmt(t.inv)
   if (invd) invd.textContent = fmt(t.investido)
   if (sl) sl.textContent = fmt(t.saldo)
 }
 
-var typeLabel = { ganho: 'Ganho', ganho_futuro: 'Futuro', despesa: 'Despesa', aporte: 'Aporte', resgate: 'Resgate', investido: 'Investido', lucro_invest: 'Lucro Inv.', saldo_conta: 'Saldo Conta' }
+var typeLabel = { ganho: 'Ganho', ganho_futuro: 'Futuro', despesa: 'Despesa', despesa_futura: 'Desp. Fut.', aporte: 'Aporte', resgate: 'Resgate', investido: 'Investido', lucro_invest: 'Lucro Inv.', saldo_conta: 'Saldo Conta' }
 
 function amtClass(t) {
   if (t === 'ganho') return 'amt amt--gain'
   if (t === 'ganho_futuro') return 'amt amt--future'
   if (t === 'despesa') return 'amt amt--loss'
+  if (t === 'despesa_futura') return 'amt amt--future-loss'
   if (t === 'investido') return 'amt amt--investido'
   if (t === 'lucro_invest') return 'amt amt--lucro-inv'
   if (t === 'saldo_conta') return 'amt amt--saldo-conta'
