@@ -3,151 +3,150 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="FD Investimentos — painel financeiro." />
-    <title>FD Investimentos</title>
+    <meta name="description" content="Neyfel Tech — Monte seu PC (agenda de peças e orçamento)." />
+    <title>Neyfel Tech — Monte seu PC</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="app">
-      <section id="view-config" class="view view--center" hidden>
-        <div class="card card--narrow">
-          <h1>Configurar Supabase</h1>
-          <p class="muted">Defina <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code> em <code>app.js</code>.</p>
-        </div>
-      </section>
-
-      <section id="view-auth" class="view view--center">
-        <div class="card card--narrow">
-          <header class="brand">
-            <h1>FD Investimentos</h1>
-            <p class="muted">Entre ou crie uma conta.</p>
-          </header>
-          <div id="auth-banner" class="banner banner--err" role="alert" hidden></div>
-          <p id="auth-resend" class="resend" hidden>
-            <button type="button" class="link" id="btn-resend">Reenviar e-mail de confirmação</button>
-          </p>
-          <div class="tabs" role="tablist">
-            <button type="button" class="tab tab--on" id="tab-login" role="tab">Entrar</button>
-            <button type="button" class="tab" id="tab-register" role="tab">Criar conta</button>
+    <div class="app">
+      <header class="top">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">NT</div>
+          <div class="brand__txt">
+            <h1>Neyfel Tech</h1>
+            <p>Monte seu PC · agenda de peças/periféricos e orçamento</p>
           </div>
-          <form id="form-auth" class="stack" novalidate>
-            <label class="field">
-              <span>E-mail</span>
-              <input id="email" type="email" autocomplete="email" required placeholder="seu@email.com" />
-            </label>
-            <label class="field">
-              <span>Senha</span>
-              <input id="password" type="password" required minlength="6" placeholder="Mínimo 6 caracteres" />
-            </label>
-            <button type="submit" class="btn btn--primary" id="btn-auth">Entrar</button>
-          </form>
         </div>
-      </section>
-
-      <section id="view-dash" class="view view--dash" hidden>
-        <header class="topbar">
-          <div class="topbar__user">
-            <span id="user-email" class="muted"></span>
-            <button type="button" class="btn btn--ghost" id="btn-logout">Sair</button>
+        <div class="totals" aria-label="Totais">
+          <div class="total">
+            <div class="total__label">Preço estimado</div>
+            <div class="total__value" id="sum-total">R$&nbsp;0,00</div>
           </div>
-        </header>
+          <div class="total total--muted">
+            <div class="total__label">Itens</div>
+            <div class="total__value" id="sum-count">0</div>
+          </div>
+        </div>
+      </header>
 
-        <main class="main">
-          <div id="board-msg" class="banner" role="status" hidden></div>
+      <main class="main">
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-          <header class="dash-hero" aria-label="Painel">
-            <h1 class="dash-hero__title">FD Investimentos</h1>
-            <p class="dash-hero__subtitle">Painel financeiro</p>
-          </header>
+        <section class="auth" id="auth" aria-label="Entrar" hidden>
+          <div class="auth__card">
+            <div class="auth__head">
+              <div class="auth__brand">
+                <div class="auth__logo" aria-hidden="true">NT</div>
+                <div>
+                  <h2>Neyfel Tech</h2>
+                  <p class="muted">Monte seu PC · salve suas peças e orçamento</p>
+                </div>
+              </div>
+            </div>
+            <div class="auth__tabs" role="tablist" aria-label="Acesso">
+              <button type="button" class="auth__tab auth__tab--on" data-auth-mode="login">Entrar</button>
+              <button type="button" class="auth__tab" data-auth-mode="register">Criar conta</button>
+            </div>
+            <div id="auth-msg" class="auth__msg" hidden></div>
+            <form id="auth-form" class="auth__form" novalidate>
+              <label class="field">
+                <span>E-mail</span>
+                <input id="auth-email" type="email" autocomplete="email" placeholder="seu@email.com" required />
+              </label>
+              <label class="field">
+                <span>Senha</span>
+                <input id="auth-pass" type="password" autocomplete="current-password" placeholder="Mínimo 6 caracteres" required minlength="6" />
+              </label>
+              <label class="auth__toggle">
+                <input id="auth-show-pass" type="checkbox" />
+                <span>Mostrar senha</span>
+              </label>
+              <div class="auth__actions">
+                <button class="btn btn--primary" type="submit" id="btn-auth-primary">Entrar</button>
+              </div>
+              <p class="muted auth__help" id="auth-help">Use seu e-mail e senha para entrar.</p>
+            </form>
+          </div>
+        </section>
 
-          <section class="grid grid--summary" aria-label="Resumo">
-            <article class="tile tile--gain">
-              <h2>Ganhos (realizados)</h2>
-              <p class="tile__val" id="sum-ganhos">R$&nbsp;0,00</p>
-            </article>
-            <article class="tile tile--future">
-              <h2>Ganhos futuros</h2>
-              <p class="tile__val" id="sum-ganhos-futuros">R$&nbsp;0,00</p>
-            </article>
-            <article class="tile tile--loss">
-              <h2>Despesas</h2>
-              <p class="tile__val" id="sum-despesas">R$&nbsp;0,00</p>
-            </article>
-            <article class="tile tile--future-loss">
-              <h2>Despesas futuras</h2>
-              <p class="tile__val" id="sum-despesas-futuras">R$&nbsp;0,00</p>
-            </article>
-            <article class="tile tile--inv">
-              <h2>Lucro investimentos</h2>
-              <p class="tile__val" id="sum-invest">R$&nbsp;0,00</p>
-            </article>
-            <article class="tile tile--invested">
-              <h2>Investido</h2>
-              <p class="tile__val" id="sum-investido">R$&nbsp;0,00</p>
-            </article>
-            <article class="tile tile--saldo">
-              <h2>Saldo em conta</h2>
-              <p class="tile__val" id="sum-saldo">R$&nbsp;0,00</p>
-            </article>
-          </section>
+        <div id="app-content">
+          <div class="session">
+            <span class="muted" id="session-email"></span>
+            <button class="btn btn--ghost" type="button" id="btn-logout" hidden>Sair</button>
+          </div>
 
           <section class="card">
-            <h2 class="h2">Novo lançamento</h2>
-            <form id="form-add" class="form grid-form" novalidate>
-              <label class="field">
-                <span>Tipo</span>
-                <select id="tipo" name="tipo">
-                  <option value="ganho">Ganho / receita</option>
-                  <option value="ganho_futuro">Ganho futuro</option>
-                  <option value="despesa" selected>Despesa</option>
-                  <option value="despesa_futura">Despesa futura</option>
-                  <option value="aporte">Aporte</option>
-                  <option value="resgate">Resgate</option>
-                  <option value="investido">Investido</option>
-                  <option value="lucro_invest">Lucro investimentos</option>
-                  <option value="saldo_conta">Saldo em conta</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>Valor (R$)</span>
-                <input id="valor" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" />
-              </label>
-              <label class="field field--full">
-                <span>Descrição</span>
-                <input id="desc" type="text" placeholder="Ex.: Salário, aluguel…" autocomplete="off" />
-              </label>
-              <label class="field field--full">
-                <span id="data-label">Data</span>
-                <input id="data" type="date" autocomplete="off" />
-              </label>
-              <div class="field field--full form-actions">
-                <button type="submit" class="btn btn--primary" id="btn-add">Adicionar lançamento</button>
+            <h2>Novo item</h2>
+            <form id="form-item" class="form" novalidate>
+              <div class="grid">
+                <label class="field">
+                  <span>Categoria</span>
+                  <select id="item-category">
+                    <option value="peca" selected>Peça</option>
+                    <option value="periferico">Periférico</option>
+                    <option value="servico">Serviço</option>
+                    <option value="outros">Outros</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Preço (R$)</span>
+                  <input id="item-price" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" />
+                </label>
+                <label class="field field--full">
+                  <span>Nome</span>
+                  <input id="item-name" type="text" placeholder="Ex.: Ryzen 5 5600, RTX 4060, Teclado..." autocomplete="off" />
+                </label>
+                <label class="field field--full">
+                  <span>Observações (opcional)</span>
+                  <input id="item-notes" type="text" placeholder="Loja, garantia, link, etc." autocomplete="off" />
+                </label>
+
+                <label class="field">
+                  <span>Foto (arquivo)</span>
+                  <input id="item-photo" type="file" accept="image/*" />
+                </label>
+                <label class="field">
+                  <span>ou URL da foto</span>
+                  <input id="item-photo-url" type="url" placeholder="https://..." autocomplete="off" />
+                </label>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn--primary" type="submit" id="btn-save">Adicionar</button>
+                <button class="btn btn--ghost" type="button" id="btn-cancel" hidden>Cancelar edição</button>
+                <span class="muted hint">As fotos por arquivo são enviadas pro Supabase Storage. Se der erro, tente uma imagem menor.</span>
               </div>
             </form>
           </section>
 
           <section class="card">
-            <div class="list-head">
-              <h2 class="h2">Movimentações</h2>
-              <div class="chips" role="tablist">
-                <button type="button" class="chip chip--on" data-filter="todos">Todos</button>
-                <button type="button" class="chip" data-filter="ganho">Ganhos</button>
-                <button type="button" class="chip" data-filter="ganho_futuro">Futuros</button>
-                <button type="button" class="chip" data-filter="despesa">Despesas</button>
-                <button type="button" class="chip" data-filter="despesa_futura">Desp. Fut.</button>
-                <button type="button" class="chip" data-filter="investimento">Invest.</button>
-                <button type="button" class="chip" data-filter="investido">Investido</button>
-                <button type="button" class="chip" data-filter="lucro_invest">Lucro Inv.</button>
-                <button type="button" class="chip" data-filter="saldo_conta">Saldo</button>
+            <div class="card__head">
+              <h2>Agenda</h2>
+              <div class="tools">
+                <label class="sr-only" for="search">Buscar</label>
+                <input id="search" class="search" type="search" placeholder="Buscar item..." autocomplete="off" />
+                <select id="filter">
+                  <option value="todos" selected>Todos</option>
+                  <option value="peca">Peças</option>
+                  <option value="periferico">Periféricos</option>
+                  <option value="servico">Serviços</option>
+                  <option value="outros">Outros</option>
+                </select>
+                <button class="btn btn--ghost" type="button" id="btn-export">Exportar</button>
+                <label class="btn btn--ghost btn--file" for="import-file">Importar</label>
+                <input id="import-file" type="file" accept="application/json" hidden />
+                <button class="btn btn--danger" type="button" id="btn-clear">Limpar tudo</button>
               </div>
             </div>
-            <div id="list-empty" class="empty" hidden>
-              <p>Nenhum lançamento ainda.</p>
+
+            <div id="empty" class="empty">
+              <p>Nenhum item ainda. Adicione suas peças e periféricos acima.</p>
             </div>
-            <ul id="item-list" class="list"></ul>
+
+            <ul id="list" class="list" aria-label="Itens"></ul>
           </section>
-        </main>
-      </section>
+        </div>
+      </main>
     </div>
 
     <footer class="site-footer">
